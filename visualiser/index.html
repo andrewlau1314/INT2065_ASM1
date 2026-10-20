@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adding an item — stack, queue, linked list</title>
+<style>
+  :root {
+    --navy: #1a365d;
+    --ink: #1c2836;
+    --muted: #3d4a5c;
+    --blue: #e7eef6;
+    --blue-edge: #8eabcd;
+    --amber: #ffe08a;
+    --amber-edge: #b7791f;
+    --line: #c5cdd8;
+    --bg: #f3f6fb;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Calibri, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 20px;
+    line-height: 1.35;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 18px 22px 28px; }
+  h1 { margin: 0; font-size: 32px; color: var(--navy); letter-spacing: -0.02em; }
+  .sub { margin: 2px 0 14px; color: var(--muted); font-size: 18px; }
+  .modes { display: flex; gap: 10px; margin-bottom: 14px; }
+  button {
+    font: inherit;
+    font-weight: 700;
+    border-radius: 10px;
+    border: 2px solid var(--navy);
+    background: #fff;
+    color: var(--navy);
+    padding: 10px 18px;
+    cursor: pointer;
+  }
+  button:focus-visible { outline: 3px solid #d69e2e; outline-offset: 2px; }
+  .modes button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px 18px;
+  }
+  .toprow { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; }
+  .step { font-weight: 700; color: var(--navy); font-size: 22px; }
+  .note { color: var(--muted); font-size: 16px; }
+  .stage { margin: 16px 0 6px; min-height: 210px; }
+  .cells, .slots { display: flex; gap: 12px; justify-content: center; }
+  .cell {
+    width: 112px;
+    min-height: 104px;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .cell .val { font-size: 34px; font-weight: 700; min-height: 42px; }
+  .cell .idx { font-size: 16px; color: var(--muted); }
+  .cell.filled { background: var(--blue); border-color: var(--blue-edge); }
+  .cell.just { background: var(--amber); border-color: var(--amber-edge); }
+  .slots { min-height: 32px; margin-top: 6px; }
+  .slot { width: 112px; text-align: center; font-weight: 700; color: var(--navy); font-size: 18px; }
+  .slot.just { color: #8a5a00; }
+  .array-row { display: flex; justify-content: center; align-items: center; gap: 16px; }
+  .side-ptr {
+    font-weight: 700;
+    color: var(--navy);
+    border: 2px dashed var(--navy);
+    border-radius: 10px;
+    padding: 8px 10px;
+    min-width: 110px;
+    text-align: center;
+  }
+  .side-ptr.just { background: var(--amber); border-style: solid; border-color: var(--amber-edge); color: #8a5a00; }
+  .empty-ptr { text-align: center; font-weight: 700; color: var(--navy); margin-top: 8px; }
+  .chain { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
+  .node {
+    width: 150px;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    padding: 8px 10px 10px;
+  }
+  .node .ni { font-size: 14px; color: var(--muted); }
+  .node .row { display: flex; justify-content: space-between; gap: 8px; font-size: 20px; }
+  .node .k { color: var(--muted); font-size: 14px; }
+  .node.filled { background: var(--blue); border-color: var(--blue-edge); }
+  .node.just { background: var(--amber); border-color: var(--amber-edge); }
+  .field.just { background: var(--amber); border-radius: 6px; padding: 0 4px; }
+  .arrow { font-size: 28px; font-weight: 700; color: var(--navy); }
+  .off { margin-top: 8px; color: var(--muted); font-size: 17px; text-align: center; }
+  table.grid { border-collapse: collapse; margin: 12px auto 0; }
+  table.grid th, table.grid td {
+    border: 1px solid var(--line);
+    padding: 6px 16px;
+    text-align: center;
+    min-width: 88px;
+  }
+  table.grid th { background: var(--navy); color: #fff; font-weight: 700; }
+  table.grid td.just { background: var(--amber); }
+  table.grid td.filled { background: var(--blue); }
+  .code {
+    font-family: Consolas, "Courier New", monospace;
+    background: #f7f5f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 14px;
+    min-height: 28px;
+  }
+  .aside {
+    margin-top: 8px;
+    font-size: 16px;
+    color: var(--muted);
+    white-space: pre-line;
+  }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  button.primary { background: var(--navy); color: #fff; }
+  button:disabled { opacity: 0.45; cursor: default; }
+  [hidden] { display: none !important; }
+  .mode-label {
+    align-self: center;
+    min-width: 92px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .cell, .slot { flex: 0 0 112px; }
+  .side-ptr { flex: 0 0 auto; }
+  .stage { overflow-x: auto; }
+  .free-controls { align-items: center; }
+  .free-controls label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .free-controls input {
+    font: inherit;
+    font-weight: 700;
+    width: 120px;
+    padding: 8px 10px;
+    border: 2px solid var(--navy);
+    border-radius: 10px;
+    color: var(--ink);
+    background: #fff;
+  }
+  .free-controls input.index { width: 72px; }
+  .free-controls input:focus-visible { outline: 3px solid #d69e2e; outline-offset: 2px; }
+  .empty-ptr.just {
+    background: var(--amber);
+    border-radius: 10px;
+    padding: 8px 12px;
+    border: 2px solid var(--amber-edge);
+    color: #8a5a00;
+  }
+  .hint {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #fff8e7;
+    border: 1px solid #e6d3a1;
+  }
+  .hint.show { display: block; white-space: pre-line; }
+  .code { white-space: pre-line; }
+  @media (max-width: 860px) {
+    .note { flex: 1 1 100%; }
+    .cells, .slots, .array-row { justify-content: flex-start; }
+    .cells, .slots { gap: 6px; }
+    .cell, .slot { flex: 0 0 52px; width: 52px; }
+    .cell { min-height: 74px; }
+    .cell .val { font-size: 18px; }
+    .side-ptr { min-width: 0; }
+  }
+  footer { margin-top: 14px; font-size: 15px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Adding an item</h1>
+  <p class="sub" id="subtitle">One click changes one pointer or one cell. Write the worksheet row before Next.</p>
+  <div class="modes" role="group" aria-label="Mode">
+    <span class="mode-label">Mode</span>
+    <button type="button" id="play-lesson" aria-pressed="true">Lesson</button>
+    <button type="button" id="play-free" aria-pressed="false">Free build</button>
+  </div>
+  <div class="modes" role="group" aria-label="Structure">
+    <span class="mode-label">Structure</span>
+    <button type="button" id="mode-stack" aria-pressed="true">Stack</button>
+    <button type="button" id="mode-queue" aria-pressed="false">Queue</button>
+    <button type="button" id="mode-list" aria-pressed="false">Linked list</button>
+  </div>
+  <div class="panel">
+    <div class="toprow">
+      <div class="step" id="step-label">0 of 6</div>
+      <div class="note" id="mode-note"></div>
+    </div>
+    <div class="stage" id="stage"></div>
+    <div class="code" id="code" aria-live="polite"></div>
+    <div class="aside" id="aside"></div>
+    <div class="controls" id="lesson-controls">
+      <button type="button" id="back">Back</button>
+      <button type="button" id="next" class="primary">Next</button>
+      <button type="button" id="reset">Reset</button>
+      <button type="button" id="hint-btn">Hint</button>
+    </div>
+    <div class="controls free-controls" id="free-controls" hidden>
+      <label>Value <input id="op-value" type="text" inputmode="numeric" maxlength="5" autocomplete="off" spellcheck="false" aria-label="Value"></label>
+      <label id="index-wrap">Index <input id="op-index" class="index" type="text" inputmode="numeric" maxlength="1" autocomplete="off" spellcheck="false" aria-label="Index"></label>
+      <button type="button" id="op-add" class="primary">Push</button>
+      <button type="button" id="op-remove">Pop</button>
+      <button type="button" id="op-look">Top</button>
+      <button type="button" id="op-add-after">Insert after</button>
+      <button type="button" id="op-remove-at">Remove index</button>
+      <button type="button" id="free-reset">Reset</button>
+    </div>
+    <div class="hint" id="hint" role="status"></div>
+    <div class="hint" id="status" role="status" hidden></div>
+  </div>
+  <footer>Lesson mode traces 15, 28 and 41. Free build starts empty. Hints are fixed sentences, checked against the lesson-plan tables. This page does not call an AI model. In lesson mode, arrow keys move Back and Next.</footer>
+</div>
+<script>
+(function () {
+  var stackAside = "if TOP = 6 then\n    output \"stack overflow\"\nNot traced. TOP never reaches 6.";
+  var queueAside = "if REAR = 6 then\n    output \"queue overflow\"\nNot traced. REAR never reaches 6.\nFRONT is not assigned by enqueue.";
+
+  var modes = {
+    stack: {
+      name: "Stack",
+      note: "S[1..6]. S[4], S[5] and S[6] stay empty.",
+      aside: stackAside,
+      kind: "array",
+      pointer: "TOP",
+      snaps: [
+        { ptr: 0, cells: ["", "", "", "", "", ""], code: "Ready. Press Next for one change.", changed: null, hint: "Which way does TOP move on a push?" },
+        { ptr: 1, cells: ["", "", "", "", "", ""], code: "TOP \u2190 TOP + 1", changed: "ptr", hint: "TOP has moved. Which cell receives the new value?" },
+        { ptr: 1, cells: ["15", "", "", "", "", ""], code: "S[TOP] \u2190 value", changed: "cell-1", hint: "Which way does TOP move for the next push?" },
+        { ptr: 2, cells: ["15", "", "", "", "", ""], code: "TOP \u2190 TOP + 1", changed: "ptr", hint: "Which cell receives the new value?" },
+        { ptr: 2, cells: ["15", "28", "", "", "", ""], code: "S[TOP] \u2190 value", changed: "cell-2", hint: "Which way does TOP move for the next push?" },
+        { ptr: 3, cells: ["15", "28", "", "", "", ""], code: "TOP \u2190 TOP + 1", changed: "ptr", hint: "Which cell receives the new value?" },
+        { ptr: 3, cells: ["15", "28", "41", "", "", ""], code: "S[TOP] \u2190 value", changed: "cell-3", hint: "The trace for this mode is finished." }
+      ]
+    },
+    queue: {
+      name: "Queue",
+      note: "Q[1..6]. FRONT stays 1. Q[4], Q[5] and Q[6] stay empty.",
+      aside: queueAside,
+      kind: "queue",
+      snaps: [
+        { front: 1, rear: 0, cells: ["", "", "", "", "", ""], code: "Ready. Press Next for one change.", changed: null, hint: "Which cell does REAR move to?" },
+        { front: 1, rear: 1, cells: ["", "", "", "", "", ""], code: "REAR \u2190 REAR + 1", changed: "rear", hint: "REAR has moved. Which cell receives the new value?" },
+        { front: 1, rear: 1, cells: ["15", "", "", "", "", ""], code: "Q[REAR] \u2190 value", changed: "cell-1", hint: "Which cell does REAR move to now?" },
+        { front: 1, rear: 2, cells: ["15", "", "", "", "", ""], code: "REAR \u2190 REAR + 1", changed: "rear", hint: "Which cell receives the new value?" },
+        { front: 1, rear: 2, cells: ["15", "28", "", "", "", ""], code: "Q[REAR] \u2190 value", changed: "cell-2", hint: "Which cell does REAR move to now?" },
+        { front: 1, rear: 3, cells: ["15", "28", "", "", "", ""], code: "REAR \u2190 REAR + 1", changed: "rear", hint: "Which cell receives the new value?" },
+        { front: 1, rear: 3, cells: ["15", "28", "41", "", "", ""], code: "Q[REAR] \u2190 value", changed: "cell-3", hint: "The trace for this mode is finished." }
+      ]
+    },
+    list: {
+      name: "Linked list",
+      note: "HEAD = 1 throughout. Node 4 stays empty. 0 means null.",
+      aside: "Do NEXT[3] \u2190 NEXT[1] before NEXT[1] \u2190 3.\nIf NEXT[1] is changed first, the arrow from 15 to 41 is lost.",
+      kind: "list",
+      snaps: [
+        {
+          head: 1,
+          nodes: [{ data: "15", next: "2" }, { data: "41", next: "0" }, { data: "\u2014", next: "0" }, { data: "\u2014", next: "0" }],
+          code: "Ready. The list is 15 \u2192 41 \u2192 null. Press Next for one change.",
+          changed: null,
+          hint: "Which free node receives the new value?"
+        },
+        {
+          head: 1,
+          nodes: [{ data: "15", next: "2" }, { data: "41", next: "0" }, { data: "28", next: "0" }, { data: "\u2014", next: "0" }],
+          code: "DATA[3] \u2190 28",
+          changed: "data-3",
+          hint: "NEXT[1] is still 2. Where should node 3 point?"
+        },
+        {
+          head: 1,
+          nodes: [{ data: "15", next: "2" }, { data: "41", next: "0" }, { data: "28", next: "2" }, { data: "\u2014", next: "0" }],
+          code: "NEXT[3] \u2190 NEXT[1]",
+          changed: "next-3",
+          hint: "Which NEXT must change so the first node points at the new node?"
+        },
+        {
+          head: 1,
+          nodes: [{ data: "15", next: "3" }, { data: "41", next: "0" }, { data: "28", next: "2" }, { data: "\u2014", next: "0" }],
+          code: "NEXT[1] \u2190 3",
+          changed: "next-1",
+          hint: "The trace for this mode is finished."
+        }
+      ]
+    }
+  };
+
+  var modeId = "stack";
+  var play = "lesson";
+  var step = 0;
+  var hintOpen = false;
+  var free = null;
+  var statusText = "";
+  var playing = false;
+  var timer = null;
+  var freeState = { stack: null, queue: null, list: null };
+  var freeStatus = { stack: "", queue: "", list: "" };
+  var stepMs = 900;
+  try {
+    if (new URLSearchParams(window.location.search).get("fast") === "1") stepMs = 40;
+  } catch (ignore) {}
+
+  var stage = document.getElementById("stage");
+  var codeEl = document.getElementById("code");
+  var asideEl = document.getElementById("aside");
+  var stepEl = document.getElementById("step-label");
+  var noteEl = document.getElementById("mode-note");
+  var hintEl = document.getElementById("hint");
+  var statusEl = document.getElementById("status");
+  var subtitleEl = document.getElementById("subtitle");
+
+  var opNames = {
+    stack: { add: "Push", remove: "Pop", look: "Top" },
+    queue: { add: "Enqueue", remove: "Dequeue", look: "Front" },
+    list: { add: "Insert at head", remove: "Remove head", look: "Head" }
+  };
+
+  function blankCells() { return ["", "", "", "", "", ""]; }
+  function blankNodes() {
+    return [
+      { data: "\u2014", next: "0" },
+      { data: "\u2014", next: "0" },
+      { data: "\u2014", next: "0" },
+      { data: "\u2014", next: "0" }
+    ];
+  }
+  function emptyState(id) {
+    if (id === "stack") return { ptr: 0, cells: blankCells(), code: "Empty stack. TOP = 0.", changed: null };
+    if (id === "queue") return { front: 1, rear: 0, cells: blankCells(), code: "Empty queue. FRONT = 1, REAR = 0.", changed: null };
+    return { head: 0, nodes: blankNodes(), code: "Empty list. HEAD = 0.", changed: null };
+  }
+  function startMessage(id) {
+    if (id === "stack") return "Empty stack. Enter an integer and press Push.";
+    if (id === "queue") return "Empty queue. Enter an integer and press Enqueue.";
+    return "Empty list. Enter an integer and press Insert at head.";
+  }
+  function copySnap(s) {
+    var n = { code: s.code, changed: s.changed, ptr: s.ptr, front: s.front, rear: s.rear, head: s.head };
+    if (s.cells) n.cells = s.cells.slice();
+    if (s.nodes) n.nodes = s.nodes.map(function (nd) { return { data: nd.data, next: nd.next }; });
+    return n;
+  }
+  function cancelPlay() {
+    if (timer) clearTimeout(timer);
+    timer = null;
+    playing = false;
+  }
+  function playSteps(frames) {
+    cancelPlay();
+    var i = 0;
+    function show() {
+      free = frames[i].state;
+      statusText = frames[i].status;
+      var more = i < frames.length - 1;
+      playing = more;
+      render();
+      i += 1;
+      if (more) timer = setTimeout(show, stepMs);
+    }
+    show();
+  }
+  function fail(message) {
+    cancelPlay();
+    free = copySnap(free);
+    free.changed = null;
+    free.code = message;
+    statusText = message;
+    render();
+  }
+  function clearValue() {
+    document.getElementById("op-value").value = "";
+  }
+  function readValue() {
+    var raw = document.getElementById("op-value").value.trim();
+    if (raw === "") return { ok: false, msg: "Enter an integer, then press the add button." };
+    if (!/^-?\d+$/.test(raw)) return { ok: false, msg: "Enter an integer from -999 to 999." };
+    var n = parseInt(raw, 10);
+    if (n < -999 || n > 999) return { ok: false, msg: "Enter an integer from -999 to 999." };
+    return { ok: true, n: n };
+  }
+  function readIndex() {
+    var raw = document.getElementById("op-index").value.trim();
+    if (!/^[1-4]$/.test(raw)) return { ok: false, msg: "Enter an index from 1 to 4." };
+    return { ok: true, n: parseInt(raw, 10) };
+  }
+  function series(items) {
+    if (!items.length) return "empty";
+    return "[" + items.join(", ") + "]";
+  }
+  function stackValues(s) {
+    var items = [];
+    for (var i = 0; i < s.ptr; i++) items.push(s.cells[i]);
+    return series(items);
+  }
+  function queueValues(s) {
+    if (s.front > s.rear) return "empty";
+    var items = [];
+    for (var i = s.front; i <= s.rear; i++) items.push(s.cells[i - 1]);
+    return series(items);
+  }
+  function firstFree(s) {
+    for (var i = 0; i < s.nodes.length; i++) if (s.nodes[i].data === "\u2014") return i + 1;
+    return 0;
+  }
+  function onChain(s, index) {
+    var seen = {};
+    var i = s.head;
+    while (i && !seen[i]) {
+      if (i === index) return true;
+      seen[i] = true;
+      i = parseInt(s.nodes[i - 1].next, 10) || 0;
+    }
+    return false;
+  }
+  function predecessor(s, index) {
+    var seen = {};
+    var i = s.head;
+    while (i && !seen[i]) {
+      seen[i] = true;
+      var nxt = parseInt(s.nodes[i - 1].next, 10) || 0;
+      if (nxt === index) return i;
+      i = nxt;
+    }
+    return -1;
+  }
+  function loadFree(id) {
+    if (!freeState[id]) {
+      freeState[id] = emptyState(id);
+      freeStatus[id] = startMessage(id);
+    }
+    free = freeState[id];
+    statusText = freeStatus[id];
+  }
+  function pointerHeading(m, s) {
+    if (m.kind === "array") return "TOP = " + s.ptr;
+    if (m.kind === "queue") return "FRONT = " + s.front + " \u00b7 REAR = " + s.rear;
+    return "HEAD = " + s.head;
+  }
+  function freeNote(m) {
+    if (m.kind === "array") return "S[1..6]. Push and pop both use the top.";
+    if (m.kind === "queue") return "Q[1..6]. Enqueue uses REAR. Dequeue and Front use FRONT.";
+    return "Four rows. Insert at head or after an index. Remove head or an index.";
+  }
+  function freeAside(m) {
+    if (m.kind === "array") {
+      return "Push: TOP \u2190 TOP + 1, then S[TOP] \u2190 value.\nPop: item \u2190 S[TOP], then TOP \u2190 TOP - 1.\nTop reads S[TOP] and leaves the stack as it is.\nif TOP = 6 then output \"stack overflow\"\nif TOP = 0 then output \"stack underflow\"";
+    }
+    if (m.kind === "queue") {
+      return "Enqueue: REAR \u2190 REAR + 1, then Q[REAR] \u2190 value.\nDequeue: item \u2190 Q[FRONT], then FRONT \u2190 FRONT + 1.\nFront reads Q[FRONT] and leaves the queue as it is.\nCells in front of FRONT stay unused.\nif REAR = 6 then output \"queue overflow\"\nif FRONT > REAR then output \"queue underflow\"";
+    }
+    return "Insert writes a free row, copies the old NEXT onto that row, then swings the pointer.\n0 means null. Index is the row number, from 1 to 4.";
+  }
+  function stackPush() {
+    if (playing) return;
+    var got = readValue();
+    if (!got.ok) { fail(got.msg); return; }
+    if (free.ptr >= 6) { fail("if TOP = 6 then\n    output \"stack overflow\""); return; }
+    var v = got.n;
+    var s1 = copySnap(free);
+    s1.ptr = s1.ptr + 1;
+    s1.changed = "ptr";
+    s1.code = "TOP \u2190 TOP + 1";
+    var s2 = copySnap(s1);
+    s2.cells[s2.ptr - 1] = String(v);
+    s2.changed = "cell-" + s2.ptr;
+    s2.code = "S[TOP] \u2190 " + v;
+    var done = "Pushed " + v + ". TOP = " + s2.ptr + ". S = " + stackValues(s2) + ".";
+    playSteps([
+      { state: s1, status: s1.code },
+      { state: s2, status: s1.code + "\n" + s2.code + "\n" + done }
+    ]);
+    clearValue();
+  }
+  function stackPop() {
+    if (playing) return;
+    if (free.ptr === 0) { fail("if TOP = 0 then\n    output \"stack underflow\""); return; }
+    var idx = free.ptr;
+    var value = free.cells[idx - 1];
+    var s1 = copySnap(free);
+    s1.changed = "cell-" + idx;
+    s1.code = "item \u2190 S[TOP]";
+    var s2 = copySnap(s1);
+    s2.cells[idx - 1] = "";
+    s2.ptr = idx - 1;
+    s2.changed = "ptr";
+    s2.code = "TOP \u2190 TOP - 1";
+    var done = "Popped " + value + ". TOP = " + s2.ptr + ". S = " + stackValues(s2) + ".";
+    playSteps([
+      { state: s1, status: "Top item is " + value + ".\n" + s1.code },
+      { state: s2, status: s1.code + "\n" + s2.code + "\n" + done }
+    ]);
+  }
+  function stackTop() {
+    if (playing) return;
+    if (free.ptr === 0) { fail("Stack is empty. TOP = 0."); return; }
+    var s1 = copySnap(free);
+    s1.changed = "cell-" + s1.ptr;
+    s1.code = "item \u2190 S[TOP]";
+    free = s1;
+    statusText = "Top item is " + s1.cells[s1.ptr - 1] + ". TOP = " + s1.ptr + ". S = " + stackValues(s1) + ".";
+    render();
+  }
+  function queueEnq() {
+    if (playing) return;
+    var got = readValue();
+    if (!got.ok) { fail(got.msg); return; }
+    if (free.rear >= 6) { fail("if REAR = 6 then\n    output \"queue overflow\""); return; }
+    var v = got.n;
+    var s1 = copySnap(free);
+    s1.rear = s1.rear + 1;
+    s1.changed = "rear";
+    s1.code = "REAR \u2190 REAR + 1";
+    var s2 = copySnap(s1);
+    s2.cells[s2.rear - 1] = String(v);
+    s2.changed = "cell-" + s2.rear;
+    s2.code = "Q[REAR] \u2190 " + v;
+    var done = "Enqueued " + v + ". FRONT = " + s2.front + ", REAR = " + s2.rear + ". Q = " + queueValues(s2) + ".";
+    playSteps([
+      { state: s1, status: s1.code },
+      { state: s2, status: s1.code + "\n" + s2.code + "\n" + done }
+    ]);
+    clearValue();
+  }
+  function queueDeq() {
+    if (playing) return;
+    if (free.front > free.rear) { fail("if FRONT > REAR then\n    output \"queue underflow\""); return; }
+    var idx = free.front;
+    var value = free.cells[idx - 1];
+    var s1 = copySnap(free);
+    s1.changed = "cell-" + idx;
+    s1.code = "item \u2190 Q[FRONT]";
+    var s2 = copySnap(s1);
+    s2.cells[idx - 1] = "";
+    s2.front = idx + 1;
+    s2.changed = "front";
+    s2.code = "FRONT \u2190 FRONT + 1";
+    var done = "Dequeued " + value + ". FRONT = " + s2.front + ", REAR = " + s2.rear + ". Q = " + queueValues(s2) + ".";
+    if (s2.front > s2.rear) done += " The queue is empty. FRONT is ahead of REAR.";
+    playSteps([
+      { state: s1, status: "Front item is " + value + ".\n" + s1.code },
+      { state: s2, status: s1.code + "\n" + s2.code + "\n" + done }
+    ]);
+  }
+  function queueFront() {
+    if (playing) return;
+    if (free.front > free.rear) {
+      fail("Queue is empty. FRONT = " + free.front + ", REAR = " + free.rear + ".");
+      return;
+    }
+    var s1 = copySnap(free);
+    s1.changed = "cell-" + s1.front;
+    s1.code = "item \u2190 Q[FRONT]";
+    free = s1;
+    statusText = "Front item is " + s1.cells[s1.front - 1] + ". FRONT = " + s1.front + ", REAR = " + s1.rear + ". Q = " + queueValues(s1) + ".";
+    render();
+  }
+  function listSummary(s) {
+    var order = chainIndexes(s);
+    var body = "empty";
+    if (order.length) {
+      body = order.map(function (i) { return s.nodes[i - 1].data; }).join(" \u2192 ") + " \u2192 null";
+    }
+    return "HEAD = " + s.head + ". List = " + body + ".";
+  }
+  function listInsertHead() {
+    if (playing) return;
+    var got = readValue();
+    if (!got.ok) { fail(got.msg); return; }
+    var f = firstFree(free);
+    if (!f) { fail("All 4 nodes are used. Remove one, then insert."); return; }
+    var v = got.n;
+    var s1 = copySnap(free);
+    s1.nodes[f - 1].data = String(v);
+    s1.changed = "data-" + f;
+    s1.code = "DATA[" + f + "] \u2190 " + v;
+    var s2 = copySnap(s1);
+    s2.nodes[f - 1].next = String(s2.head);
+    s2.changed = "next-" + f;
+    s2.code = "NEXT[" + f + "] \u2190 HEAD";
+    var s3 = copySnap(s2);
+    s3.head = f;
+    s3.changed = "head";
+    s3.code = "HEAD \u2190 " + f;
+    var done = "Inserted " + v + " at the head. " + listSummary(s3);
+    playSteps([
+      { state: s1, status: s1.code },
+      { state: s2, status: s1.code + "\n" + s2.code },
+      { state: s3, status: s1.code + "\n" + s2.code + "\n" + s3.code + "\n" + done }
+    ]);
+    clearValue();
+  }
+  function listInsertAfter() {
+    if (playing) return;
+    var val = readValue();
+    if (!val.ok) { fail(val.msg); return; }
+    var got = readIndex();
+    if (!got.ok) { fail(got.msg); return; }
+    if (!free.head) { fail("The list is empty. Press Insert at head."); return; }
+    if (!onChain(free, got.n)) { fail("Index " + got.n + " is not on the list from HEAD."); return; }
+    var f = firstFree(free);
+    if (!f) { fail("All 4 nodes are used. Remove one, then insert."); return; }
+    var p = got.n;
+    var v = val.n;
+    var oldNext = free.nodes[p - 1].next;
+    var s1 = copySnap(free);
+    s1.nodes[f - 1].data = String(v);
+    s1.changed = "data-" + f;
+    s1.code = "DATA[" + f + "] \u2190 " + v;
+    var s2 = copySnap(s1);
+    s2.nodes[f - 1].next = oldNext;
+    s2.changed = "next-" + f;
+    s2.code = "NEXT[" + f + "] \u2190 NEXT[" + p + "]";
+    var s3 = copySnap(s2);
+    s3.nodes[p - 1].next = String(f);
+    s3.changed = "next-" + p;
+    s3.code = "NEXT[" + p + "] \u2190 " + f;
+    var done = "Inserted " + v + " after index " + p + ". NEXT[" + p + "] was " + oldNext + " when it was copied. " + listSummary(s3);
+    playSteps([
+      { state: s1, status: s1.code },
+      { state: s2, status: s1.code + "\n" + s2.code + "\nNEXT[" + p + "] is " + oldNext + " at this step." },
+      { state: s3, status: s1.code + "\n" + s2.code + "\n" + s3.code + "\n" + done }
+    ]);
+    clearValue();
+  }
+  function listRemoveHead() {
+    if (playing) return;
+    if (!free.head) { fail("The list is empty. HEAD = 0."); return; }
+    var x = free.head;
+    var nxt = parseInt(free.nodes[x - 1].next, 10) || 0;
+    var value = free.nodes[x - 1].data;
+    var s1 = copySnap(free);
+    s1.changed = "data-" + x;
+    s1.code = "item \u2190 DATA[HEAD]";
+    var s2 = copySnap(s1);
+    s2.head = nxt;
+    s2.changed = "head";
+    s2.code = "HEAD \u2190 NEXT[" + x + "]";
+    var s3 = copySnap(s2);
+    s3.nodes[x - 1] = { data: "\u2014", next: "0" };
+    s3.changed = "drop-" + x;
+    s3.code = "DATA[" + x + "] \u2190 empty\nNEXT[" + x + "] \u2190 0";
+    var done = "Removed " + value + " from the head. " + listSummary(s3);
+    playSteps([
+      { state: s1, status: "Head item is " + value + ".\n" + s1.code },
+      { state: s2, status: s1.code + "\n" + s2.code },
+      { state: s3, status: s1.code + "\n" + s2.code + "\n" + s3.code + "\n" + done }
+    ]);
+  }
+  function listRemoveAt() {
+    if (playing) return;
+    var got = readIndex();
+    if (!got.ok) { fail(got.msg); return; }
+    if (!free.head) { fail("The list is empty. HEAD = 0."); return; }
+    if (got.n === free.head) { listRemoveHead(); return; }
+    if (!onChain(free, got.n)) { fail("Index " + got.n + " is not on the list from HEAD."); return; }
+    var p = predecessor(free, got.n);
+    if (p < 1) { fail("Index " + got.n + " is not on the list from HEAD."); return; }
+    var x = got.n;
+    var nxt = parseInt(free.nodes[x - 1].next, 10) || 0;
+    var value = free.nodes[x - 1].data;
+    var s1 = copySnap(free);
+    s1.nodes[p - 1].next = String(nxt);
+    s1.changed = "next-" + p;
+    s1.code = "NEXT[" + p + "] \u2190 NEXT[" + x + "]";
+    var s2 = copySnap(s1);
+    s2.nodes[x - 1] = { data: "\u2014", next: "0" };
+    s2.changed = "drop-" + x;
+    s2.code = "DATA[" + x + "] \u2190 empty\nNEXT[" + x + "] \u2190 0";
+    var done = "Removed " + value + " at index " + x + ". " + listSummary(s2);
+    playSteps([
+      { state: s1, status: s1.code },
+      { state: s2, status: s1.code + "\n" + s2.code + "\n" + done }
+    ]);
+  }
+  function listHead() {
+    if (playing) return;
+    if (!free.head) { fail("The list is empty. HEAD = 0."); return; }
+    var s1 = copySnap(free);
+    s1.changed = "data-" + s1.head;
+    s1.code = "item \u2190 DATA[HEAD]";
+    free = s1;
+    statusText = "Head item is " + s1.nodes[s1.head - 1].data + ". " + listSummary(s1);
+    render();
+  }
+
+  function current() { return modes[modeId]; }
+  function snap() { return current().snaps[step]; }
+
+  function cellClass(value, just) {
+    var cls = "cell";
+    if (just) cls += " just";
+    else if (value !== "") cls += " filled";
+    return cls;
+  }
+
+  function renderArray(s, pointerName) {
+    var html = '<div class="array-row">';
+    if (s.ptr === 0) {
+      html += '<div class="side-ptr' + (s.changed === "ptr" ? " just" : "") + '" data-pointer="' + pointerName + '">' + pointerName + " = 0</div>";
+    }
+    html += "<div>";
+    html += '<div class="cells">';
+    for (var i = 0; i < 6; i++) {
+      var just = s.changed === "cell-" + (i + 1);
+      html += '<div class="' + cellClass(s.cells[i], just) + '" data-cell="' + (i + 1) + '">';
+      html += '<div class="val">' + (s.cells[i] === "" ? "" : s.cells[i]) + "</div>";
+      html += '<div class="idx">' + (i + 1) + "</div></div>";
+    }
+    html += "</div>";
+    if (s.ptr !== 0) {
+      html += '<div class="slots">';
+      for (var j = 0; j < 6; j++) {
+        var on = s.ptr === j + 1;
+        html += '<div class="slot' + (on && s.changed === "ptr" ? " just" : "") + '"' + (on ? ' data-pointer="' + pointerName + '"' : "") + ">";
+        html += on ? pointerName : "";
+        html += "</div>";
+      }
+      html += "</div>";
+    }
+    html += "</div></div>";
+    return html;
+  }
+
+  function renderQueueIdle(s) {
+    var html = '<div class="array-row">';
+    html += '<div class="side-ptr' + (s.changed === "front" ? " just" : "") + '" data-pointer="FRONT">FRONT = ' + s.front + "</div>";
+    html += '<div class="side-ptr' + (s.changed === "rear" ? " just" : "") + '" data-pointer="REAR">REAR = ' + s.rear + "</div>";
+    html += "<div><div class=\"cells\">";
+    for (var i = 0; i < 6; i++) {
+      var just = s.changed === "cell-" + (i + 1);
+      html += '<div class="' + cellClass(s.cells[i], just) + '" data-cell="' + (i + 1) + '">';
+      html += '<div class="val">' + (s.cells[i] === "" ? "" : s.cells[i]) + "</div>";
+      html += '<div class="idx">' + (i + 1) + "</div></div>";
+    }
+    html += "</div></div></div>";
+    return html;
+  }
+
+  function renderQueue(s) {
+    if (s.front > s.rear && !(s.front === 1 && s.rear === 0)) return renderQueueIdle(s);
+    var html = '<div class="array-row">';
+    if (s.rear === 0) {
+      html += '<div class="side-ptr' + (s.changed === "rear" ? " just" : "") + '" data-pointer="REAR">REAR = 0</div>';
+    }
+    html += "<div>";
+    html += '<div class="cells">';
+    for (var i = 0; i < 6; i++) {
+      var just = s.changed === "cell-" + (i + 1);
+      html += '<div class="' + cellClass(s.cells[i], just) + '" data-cell="' + (i + 1) + '">';
+      html += '<div class="val">' + s.cells[i] + "</div>";
+      html += '<div class="idx">' + (i + 1) + "</div></div>";
+    }
+    html += '</div><div class="slots">';
+    for (var j = 0; j < 6; j++) {
+      var labels = [];
+      if (s.front === j + 1) labels.push("FRONT");
+      if (s.rear === j + 1) labels.push("REAR");
+      var justSlot = (s.changed === "rear" && s.rear === j + 1) || (s.changed === "front" && s.front === j + 1);
+      html += '<div class="slot' + (justSlot ? " just" : "") + '">';
+      if (labels.indexOf("FRONT") !== -1) html += '<div data-pointer="FRONT">FRONT</div>';
+      if (labels.indexOf("REAR") !== -1) html += '<div data-pointer="REAR">REAR</div>';
+      html += "</div>";
+    }
+    html += "</div></div></div>";
+    return html;
+  }
+
+  function chainIndexes(s) {
+    var order = [];
+    var seen = {};
+    var i = s.head;
+    while (i && !seen[i]) {
+      seen[i] = true;
+      order.push(i);
+      var nxt = parseInt(s.nodes[i - 1].next, 10);
+      i = nxt || 0;
+    }
+    return order;
+  }
+
+  function fieldJust(s, kind, index) {
+    return s.changed === kind + "-" + index || s.changed === "drop-" + index;
+  }
+
+  function renderList(s) {
+    var html = "";
+    if (!s.head) {
+      html += '<div class="off">HEAD = 0</div><div class="chain">';
+      for (var n0 = 1; n0 <= s.nodes.length; n0++) html += nodeCard(s, n0);
+      html += "</div>";
+    } else {
+    var order = chainIndexes(s);
+    var on = {};
+    order.forEach(function (n) { on[n] = true; });
+    html += '<div class="chain" data-chain="head">';
+    order.forEach(function (n, idx) {
+      html += nodeCard(s, n);
+      html += '<div class="arrow">\u2192</div>';
+      if (idx === order.length - 1) html += '<div class="arrow">null</div>';
+    });
+    html += "</div>";
+    var off = [];
+    for (var k = 1; k <= 4; k++) if (!on[k]) off.push(k);
+    if (off.length) {
+      html += '<div class="off">Not reached from HEAD</div><div class="chain">';
+      off.forEach(function (n) { html += nodeCard(s, n); });
+      html += "</div>";
+      off.forEach(function (n) {
+        var nxt = s.nodes[n - 1].next;
+        if (nxt !== "0" && nxt !== "\u2014") {
+          html += '<div class="off">Node ' + n + " points at index " + nxt + ", but HEAD does not reach it yet.</div>";
+        }
+      });
+    }
+    }
+    html += '<table class="grid"><tr><th>Index</th><th>DATA</th><th>NEXT</th></tr>';
+    s.nodes.forEach(function (node, idx) {
+      var index = idx + 1;
+      var dataJust = fieldJust(s, "data", index);
+      var nextJust = fieldJust(s, "next", index);
+      var dataFilled = node.data !== "\u2014" && !dataJust;
+      var nextFilled = !nextJust;
+      html += "<tr><td>" + index + "</td>";
+      html += '<td data-data="' + index + '" class="' + (dataJust ? "just" : dataFilled ? "filled" : "") + '">' + node.data + "</td>";
+      html += '<td data-next="' + index + '" class="' + (nextJust ? "just" : nextFilled ? "filled" : "") + '">' + node.next + "</td></tr>";
+    });
+    html += "</table>";
+    html += '<div class="empty-ptr' + (s.changed === "head" ? " just" : "") + '" data-pointer="HEAD">HEAD = ' + s.head + "</div>";
+    return html;
+  }
+
+  function nodeCard(s, n) {
+    var node = s.nodes[n - 1];
+    var dataJust = fieldJust(s, "data", n);
+    var nextJust = fieldJust(s, "next", n);
+    var filled = node.data !== "\u2014" && !dataJust && !nextJust;
+    var html = '<div class="node' + (filled ? " filled" : "") + (dataJust || nextJust ? " just" : "") + '">';
+    html += '<div class="ni">index ' + n + "</div>";
+    html += '<div class="row"><span class="k">DATA</span><span class="' + (dataJust ? "field just" : "") + '" data-data="' + n + '">' + node.data + "</span></div>";
+    html += '<div class="row"><span class="k">NEXT</span><span class="' + (nextJust ? "field just" : "") + '" data-next="' + n + '">' + node.next + "</span></div>";
+    html += "</div>";
+    return html;
+  }
+
+  function render() {
+    var m = current();
+    var s = play === "free" ? free : snap();
+    var last = m.snaps.length - 1;
+    if (play === "lesson") {
+      stepEl.textContent = step + " of " + last;
+      noteEl.textContent = m.note;
+      subtitleEl.textContent = "One click changes one pointer or one cell. Write the worksheet row before Next.";
+      asideEl.textContent = m.aside;
+    } else {
+      stepEl.textContent = pointerHeading(m, s);
+      noteEl.textContent = freeNote(m);
+      subtitleEl.textContent = "Type an integer, then press an operation. Each change is shown on its own.";
+      asideEl.textContent = freeAside(m);
+      freeState[modeId] = free;
+      freeStatus[modeId] = statusText;
+    }
+    if (m.kind === "array") stage.innerHTML = renderArray(s, m.pointer);
+    else if (m.kind === "queue") stage.innerHTML = renderQueue(s);
+    else stage.innerHTML = renderList(s);
+    codeEl.textContent = s.code;
+    document.getElementById("lesson-controls").hidden = play !== "lesson";
+    document.getElementById("free-controls").hidden = play !== "free";
+    document.getElementById("back").disabled = step === 0;
+    document.getElementById("next").disabled = step === last;
+    var names = opNames[modeId];
+    document.getElementById("op-add").textContent = names.add;
+    document.getElementById("op-remove").textContent = names.remove;
+    document.getElementById("op-look").textContent = names.look;
+    var listMode = modeId === "list";
+    document.getElementById("index-wrap").hidden = !listMode;
+    document.getElementById("op-add-after").hidden = !listMode;
+    document.getElementById("op-remove-at").hidden = !listMode;
+    ["op-add", "op-remove", "op-look", "op-add-after", "op-remove-at"].forEach(function (id) {
+      document.getElementById(id).disabled = playing;
+    });
+    if (play === "free") {
+      hintEl.hidden = true;
+      hintEl.classList.remove("show");
+      hintEl.textContent = "";
+      statusEl.hidden = false;
+      statusEl.classList.add("show");
+      statusEl.textContent = statusText;
+    } else {
+      statusEl.hidden = true;
+      statusEl.textContent = "";
+      hintEl.hidden = false;
+      hintEl.classList.toggle("show", hintOpen);
+      hintEl.textContent = hintOpen ? s.hint : "";
+    }
+    ["stack", "queue", "list"].forEach(function (id) {
+      document.getElementById("mode-" + id).setAttribute("aria-pressed", id === modeId ? "true" : "false");
+    });
+    document.getElementById("play-lesson").setAttribute("aria-pressed", play === "lesson" ? "true" : "false");
+    document.getElementById("play-free").setAttribute("aria-pressed", play === "free" ? "true" : "false");
+  }
+
+  function chooseStructure(id) {
+    cancelPlay();
+    hintOpen = false;
+    if (play === "free") {
+      freeState[modeId] = free;
+      freeStatus[modeId] = statusText;
+      modeId = id;
+      loadFree(modeId);
+    } else {
+      modeId = id;
+      step = 0;
+    }
+    render();
+  }
+
+  function setPlay(nextPlay) {
+    if (nextPlay === play) return;
+    cancelPlay();
+    hintOpen = false;
+    if (play === "free" && free) {
+      freeState[modeId] = free;
+      freeStatus[modeId] = statusText;
+    }
+    play = nextPlay;
+    if (play === "free") loadFree(modeId);
+    else {
+      document.getElementById("op-value").blur();
+      document.getElementById("op-index").blur();
+    }
+    render();
+  }
+
+  function setMode(id) {
+    modeId = id;
+    step = 0;
+    hintOpen = false;
+    render();
+  }
+
+  function resetFree() {
+    cancelPlay();
+    freeState[modeId] = emptyState(modeId);
+    freeStatus[modeId] = startMessage(modeId);
+    free = freeState[modeId];
+    statusText = freeStatus[modeId];
+    render();
+  }
+
+  document.getElementById("mode-stack").onclick = function () { chooseStructure("stack"); };
+  document.getElementById("mode-queue").onclick = function () { chooseStructure("queue"); };
+  document.getElementById("mode-list").onclick = function () { chooseStructure("list"); };
+  document.getElementById("play-lesson").onclick = function () { setPlay("lesson"); };
+  document.getElementById("play-free").onclick = function () { setPlay("free"); };
+  document.getElementById("next").onclick = function () {
+    if (play !== "lesson") return;
+    if (step < current().snaps.length - 1) { step += 1; hintOpen = false; render(); }
+  };
+  document.getElementById("back").onclick = function () {
+    if (play !== "lesson") return;
+    if (step > 0) { step -= 1; hintOpen = false; render(); }
+  };
+  document.getElementById("reset").onclick = function () { if (play === "lesson") setMode(modeId); };
+  document.getElementById("hint-btn").onclick = function () { if (play === "lesson") { hintOpen = true; render(); } };
+  document.getElementById("free-reset").onclick = function () { if (play === "free") resetFree(); };
+  document.getElementById("op-add").onclick = function () {
+    if (play !== "free" || playing) return;
+    if (modeId === "stack") stackPush();
+    else if (modeId === "queue") queueEnq();
+    else listInsertHead();
+  };
+  document.getElementById("op-remove").onclick = function () {
+    if (play !== "free" || playing) return;
+    if (modeId === "stack") stackPop();
+    else if (modeId === "queue") queueDeq();
+    else listRemoveHead();
+  };
+  document.getElementById("op-look").onclick = function () {
+    if (play !== "free" || playing) return;
+    if (modeId === "stack") stackTop();
+    else if (modeId === "queue") queueFront();
+    else listHead();
+  };
+  document.getElementById("op-add-after").onclick = function () {
+    if (play !== "free" || playing || modeId !== "list") return;
+    listInsertAfter();
+  };
+  document.getElementById("op-remove-at").onclick = function () {
+    if (play !== "free" || playing || modeId !== "list") return;
+    listRemoveAt();
+  };
+  document.getElementById("op-value").addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" || play !== "free") return;
+    e.preventDefault();
+    document.getElementById("op-add").click();
+  });
+  document.getElementById("op-index").addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" || play !== "free") return;
+    e.preventDefault();
+    document.getElementById("op-add-after").click();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (play !== "lesson") return;
+    if (e.target && (e.target.id === "op-value" || e.target.id === "op-index")) return;
+    if (e.key === "ArrowRight") document.getElementById("next").click();
+    if (e.key === "ArrowLeft") document.getElementById("back").click();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
