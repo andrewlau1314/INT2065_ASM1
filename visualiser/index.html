@@ -199,6 +199,7 @@
     <span class="mode-label">Structure</span>
     <button type="button" id="mode-stack" aria-pressed="true">Stack</button>
     <button type="button" id="mode-queue" aria-pressed="false">Queue</button>
+    <button type="button" id="mode-circular" aria-pressed="false">Circular queue</button>
     <button type="button" id="mode-list" aria-pressed="false">Linked list</button>
   </div>
   <div class="panel">
@@ -267,6 +268,42 @@
         { front: 1, rear: 3, cells: ["15", "28", "41", "", "", ""], code: "Q[REAR] \u2190 value", changed: "cell-3", hint: "The trace for this mode is finished." }
       ]
     },
+    circular: {
+      name: "Circular queue",
+      note: "Q[1..6]. REAR wraps from cell 6 back to cell 1.",
+      aside: "COUNT is the number of items.\nif COUNT = 6 then output \"queue overflow\"\nThe worksheet uses the linear Queue button.",
+      kind: "circular",
+      snaps: [
+        {
+          front: 5, rear: 6, count: 2,
+          cells: ["", "", "", "", "15", "28"],
+          code: "Ready. 15 and 28 are already in the queue. Press Next for one change.",
+          changed: null,
+          hint: "REAR is at the last cell. Where does REAR go next?"
+        },
+        {
+          front: 5, rear: 1, count: 2,
+          cells: ["", "", "", "", "15", "28"],
+          code: "REAR \u2190 1",
+          changed: "rear",
+          hint: "REAR has wrapped. Which cell receives the new value?"
+        },
+        {
+          front: 5, rear: 1, count: 2,
+          cells: ["41", "", "", "", "15", "28"],
+          code: "Q[REAR] \u2190 41",
+          changed: "cell-1",
+          hint: "The new value is stored. What happens to COUNT?"
+        },
+        {
+          front: 5, rear: 1, count: 3,
+          cells: ["41", "", "", "", "15", "28"],
+          code: "COUNT \u2190 COUNT + 1",
+          changed: "count",
+          hint: "The trace for this mode is finished. The queue is 15, 28, 41."
+        }
+      ]
+    },
     list: {
       name: "Linked list",
       note: "HEAD = 1 throughout. Node 4 stays empty. 0 means null.",
@@ -313,8 +350,8 @@
   var statusText = "";
   var playing = false;
   var timer = null;
-  var freeState = { stack: null, queue: null, list: null };
-  var freeStatus = { stack: "", queue: "", list: "" };
+  var freeState = { stack: null, queue: null, circular: null, list: null };
+  var freeStatus = { stack: "", queue: "", circular: "", list: "" };
   var stepMs = 900;
   try {
     if (new URLSearchParams(window.location.search).get("fast") === "1") stepMs = 40;
@@ -332,6 +369,7 @@
   var opNames = {
     stack: { add: "Push", remove: "Pop", look: "Top" },
     queue: { add: "Enqueue", remove: "Dequeue", look: "Front" },
+    circular: { add: "Enqueue", remove: "Dequeue", look: "Front" },
     list: { add: "Insert at head", remove: "Remove head", look: "Head" }
   };
 
@@ -347,15 +385,17 @@
   function emptyState(id) {
     if (id === "stack") return { ptr: 0, cells: blankCells(), code: "Empty stack. TOP = 0.", changed: null };
     if (id === "queue") return { front: 1, rear: 0, cells: blankCells(), code: "Empty queue. FRONT = 1, REAR = 0.", changed: null };
+    if (id === "circular") return { front: 0, rear: 0, count: 0, cells: blankCells(), code: "Empty circular queue. FRONT = 0, REAR = 0, COUNT = 0.", changed: null };
     return { head: 0, nodes: blankNodes(), code: "Empty list. HEAD = 0.", changed: null };
   }
   function startMessage(id) {
     if (id === "stack") return "Empty stack. Enter an integer and press Push.";
     if (id === "queue") return "Empty queue. Enter an integer and press Enqueue.";
+    if (id === "circular") return "Empty circular queue. Enter an integer and press Enqueue. When REAR is 6, the next item uses cell 1.";
     return "Empty list. Enter an integer and press Insert at head.";
   }
   function copySnap(s) {
-    var n = { code: s.code, changed: s.changed, ptr: s.ptr, front: s.front, rear: s.rear, head: s.head };
+    var n = { code: s.code, changed: s.changed, ptr: s.ptr, front: s.front, rear: s.rear, head: s.head, count: s.count };
     if (s.cells) n.cells = s.cells.slice();
     if (s.nodes) n.nodes = s.nodes.map(function (nd) { return { data: nd.data, next: nd.next }; });
     return n;
@@ -454,11 +494,13 @@
   function pointerHeading(m, s) {
     if (m.kind === "array") return "TOP = " + s.ptr;
     if (m.kind === "queue") return "FRONT = " + s.front + " \u00b7 REAR = " + s.rear;
+    if (m.kind === "circular") return "FRONT = " + s.front + " \u00b7 REAR = " + s.rear + " \u00b7 COUNT = " + s.count;
     return "HEAD = " + s.head;
   }
   function freeNote(m) {
     if (m.kind === "array") return "S[1..6]. Push and pop both use the top.";
     if (m.kind === "queue") return "Q[1..6]. Enqueue uses REAR. Dequeue and Front use FRONT.";
+    if (m.kind === "circular") return "Q[1..6]. REAR wraps from 6 to 1. COUNT is the number of items.";
     return "Four rows. Insert at head or after an index. Remove head or an index.";
   }
   function freeAside(m) {
@@ -467,6 +509,9 @@
     }
     if (m.kind === "queue") {
       return "Enqueue: REAR \u2190 REAR + 1, then Q[REAR] \u2190 value.\nDequeue: item \u2190 Q[FRONT], then FRONT \u2190 FRONT + 1.\nFront reads Q[FRONT] and leaves the queue as it is.\nCells in front of FRONT stay unused.\nif REAR = 6 then output \"queue overflow\"\nif FRONT > REAR then output \"queue underflow\"";
+    }
+    if (m.kind === "circular") {
+      return "Enqueue: if REAR = 6 then REAR \u2190 1, else REAR \u2190 REAR + 1.\nThen Q[REAR] \u2190 value, and COUNT \u2190 COUNT + 1.\nThe first item also sets FRONT \u2190 REAR.\nDequeue: item \u2190 Q[FRONT], then FRONT moves forward and wraps from 6 to 1.\nif COUNT = 6 then output \"queue overflow\"\nif COUNT = 0 then output \"queue underflow\"";
     }
     return "Insert writes a free row, copies the old NEXT onto that row, then swings the pointer.\n0 means null. Index is the row number, from 1 to 4.";
   }
@@ -572,6 +617,109 @@
     s1.code = "item \u2190 Q[FRONT]";
     free = s1;
     statusText = "Front item is " + s1.cells[s1.front - 1] + ". FRONT = " + s1.front + ", REAR = " + s1.rear + ". Q = " + queueValues(s1) + ".";
+    render();
+  }
+  function circularValues(s) {
+    if (!s.count) return "empty";
+    var items = [];
+    var i = s.front;
+    var n;
+    for (n = 0; n < s.count; n++) {
+      items.push(s.cells[i - 1]);
+      i = i === 6 ? 1 : i + 1;
+    }
+    return series(items);
+  }
+  function circSummary(s) {
+    return "FRONT = " + s.front + ", REAR = " + s.rear + ", COUNT = " + s.count + ". Q = " + circularValues(s) + ".";
+  }
+  function circEnq() {
+    if (playing) return;
+    var got = readValue();
+    if (!got.ok) { fail(got.msg); return; }
+    if (free.count >= 6) { fail("if COUNT = 6 then\n    output \"queue overflow\""); return; }
+    var v = got.n;
+    var wasEmpty = free.count === 0;
+    var wrapped = free.rear === 6;
+    var s1 = copySnap(free);
+    s1.rear = wrapped ? 1 : free.rear + 1;
+    s1.changed = "rear";
+    s1.code = wrapped ? "REAR \u2190 1" : "REAR \u2190 REAR + 1";
+    var s2 = copySnap(s1);
+    s2.cells[s2.rear - 1] = String(v);
+    s2.changed = "cell-" + s2.rear;
+    s2.code = "Q[REAR] \u2190 " + v;
+    var lines = [s1.code, s2.code];
+    var frames = [
+      { state: s1, status: s1.code },
+      { state: s2, status: lines.join("\n") }
+    ];
+    var prev = s2;
+    if (wasEmpty) {
+      var sFront = copySnap(s2);
+      sFront.front = sFront.rear;
+      sFront.changed = "front";
+      sFront.code = "FRONT \u2190 REAR";
+      lines.push(sFront.code);
+      frames.push({ state: sFront, status: lines.join("\n") });
+      prev = sFront;
+    }
+    var s3 = copySnap(prev);
+    s3.count = prev.count + 1;
+    s3.changed = "count";
+    s3.code = "COUNT \u2190 COUNT + 1";
+    lines.push(s3.code);
+    lines.push("Enqueued " + v + ". " + circSummary(s3));
+    frames.push({ state: s3, status: lines.join("\n") });
+    playSteps(frames);
+    clearValue();
+  }
+  function circDeq() {
+    if (playing) return;
+    if (!free.count) { fail("if COUNT = 0 then\n    output \"queue underflow\""); return; }
+    var idx = free.front;
+    var value = free.cells[idx - 1];
+    var s1 = copySnap(free);
+    s1.changed = "cell-" + idx;
+    s1.code = "item \u2190 Q[FRONT]";
+    var frames = [{ state: s1, status: "Front item is " + value + ".\n" + s1.code }];
+    if (free.count === 1) {
+      var sEmpty = copySnap(s1);
+      sEmpty.cells[idx - 1] = "";
+      sEmpty.count = 0;
+      sEmpty.changed = "count";
+      sEmpty.code = "COUNT \u2190 0";
+      frames.push({
+        state: sEmpty,
+        status: s1.code + "\n" + sEmpty.code + "\nDequeued " + value + ". The queue is empty. " + circSummary(sEmpty)
+      });
+    } else {
+      var wrapped = idx === 6;
+      var s2 = copySnap(s1);
+      s2.cells[idx - 1] = "";
+      s2.front = wrapped ? 1 : idx + 1;
+      s2.changed = "front";
+      s2.code = wrapped ? "FRONT \u2190 1" : "FRONT \u2190 FRONT + 1";
+      var s3 = copySnap(s2);
+      s3.count = s2.count - 1;
+      s3.changed = "count";
+      s3.code = "COUNT \u2190 COUNT - 1";
+      frames.push({ state: s2, status: s1.code + "\n" + s2.code });
+      frames.push({
+        state: s3,
+        status: s1.code + "\n" + s2.code + "\n" + s3.code + "\nDequeued " + value + ". " + circSummary(s3)
+      });
+    }
+    playSteps(frames);
+  }
+  function circFront() {
+    if (playing) return;
+    if (!free.count) { fail("Circular queue is empty. COUNT = 0."); return; }
+    var s1 = copySnap(free);
+    s1.changed = "cell-" + s1.front;
+    s1.code = "item \u2190 Q[FRONT]";
+    free = s1;
+    statusText = "Front item is " + s1.cells[s1.front - 1] + ". " + circSummary(s1);
     render();
   }
   function listSummary(s) {
@@ -785,6 +933,35 @@
     return html;
   }
 
+  function renderCircular(s) {
+    var html;
+    if (!s.count) html = renderQueueIdle(s);
+    else {
+      html = '<div class="array-row"><div>';
+      html += '<div class="cells">';
+      for (var i = 0; i < 6; i++) {
+        var just = s.changed === "cell-" + (i + 1);
+        html += '<div class="' + cellClass(s.cells[i], just) + '" data-cell="' + (i + 1) + '">';
+        html += '<div class="val">' + (s.cells[i] === "" ? "" : s.cells[i]) + "</div>";
+        html += '<div class="idx">' + (i + 1) + "</div></div>";
+      }
+      html += '</div><div class="slots">';
+      for (var j = 0; j < 6; j++) {
+        var labels = [];
+        if (s.front === j + 1) labels.push("FRONT");
+        if (s.rear === j + 1) labels.push("REAR");
+        var justSlot = (s.changed === "rear" && s.rear === j + 1) || (s.changed === "front" && s.front === j + 1);
+        html += '<div class="slot' + (justSlot ? " just" : "") + '">';
+        if (labels.indexOf("FRONT") !== -1) html += '<div data-pointer="FRONT">FRONT</div>';
+        if (labels.indexOf("REAR") !== -1) html += '<div data-pointer="REAR">REAR</div>';
+        html += "</div>";
+      }
+      html += "</div></div></div>";
+    }
+    html += '<div class="empty-ptr' + (s.changed === "count" ? " just" : "") + '" data-pointer="COUNT">COUNT = ' + s.count + "</div>";
+    return html;
+  }
+
   function chainIndexes(s) {
     var order = [];
     var seen = {};
@@ -881,6 +1058,7 @@
     }
     if (m.kind === "array") stage.innerHTML = renderArray(s, m.pointer);
     else if (m.kind === "queue") stage.innerHTML = renderQueue(s);
+    else if (m.kind === "circular") stage.innerHTML = renderCircular(s);
     else stage.innerHTML = renderList(s);
     codeEl.textContent = s.code;
     document.getElementById("lesson-controls").hidden = play !== "lesson";
@@ -912,7 +1090,7 @@
       hintEl.classList.toggle("show", hintOpen);
       hintEl.textContent = hintOpen ? s.hint : "";
     }
-    ["stack", "queue", "list"].forEach(function (id) {
+    ["stack", "queue", "circular", "list"].forEach(function (id) {
       document.getElementById("mode-" + id).setAttribute("aria-pressed", id === modeId ? "true" : "false");
     });
     document.getElementById("play-lesson").setAttribute("aria-pressed", play === "lesson" ? "true" : "false");
@@ -969,6 +1147,7 @@
 
   document.getElementById("mode-stack").onclick = function () { chooseStructure("stack"); };
   document.getElementById("mode-queue").onclick = function () { chooseStructure("queue"); };
+  document.getElementById("mode-circular").onclick = function () { chooseStructure("circular"); };
   document.getElementById("mode-list").onclick = function () { chooseStructure("list"); };
   document.getElementById("play-lesson").onclick = function () { setPlay("lesson"); };
   document.getElementById("play-free").onclick = function () { setPlay("free"); };
@@ -987,18 +1166,21 @@
     if (play !== "free" || playing) return;
     if (modeId === "stack") stackPush();
     else if (modeId === "queue") queueEnq();
+    else if (modeId === "circular") circEnq();
     else listInsertHead();
   };
   document.getElementById("op-remove").onclick = function () {
     if (play !== "free" || playing) return;
     if (modeId === "stack") stackPop();
     else if (modeId === "queue") queueDeq();
+    else if (modeId === "circular") circDeq();
     else listRemoveHead();
   };
   document.getElementById("op-look").onclick = function () {
     if (play !== "free" || playing) return;
     if (modeId === "stack") stackTop();
     else if (modeId === "queue") queueFront();
+    else if (modeId === "circular") circFront();
     else listHead();
   };
   document.getElementById("op-add-after").onclick = function () {
