@@ -1,0 +1,160 @@
+﻿
+INT2065 小組作業分工（4 人）
+課題：一課教 stack、queue、linear linked list（用陣列模擬）
+要交：教案、工作紙、可視化工具、10 分鐘簡報 + 5 分鐘問答
+簡報材料截止日期：2026 年 11 月 10 日 23:59
+中文在前，English follows。
+分工原則
+每人主責一件成品，並主講約 2 至 3 分鐘。
+做工具的人技術量最大，所以不寫教案和工作紙全文。
+教案、工作紙、工具必須用同一組例子，否則簡報對不上。
+個人作業（約 1,500 字訪問反思，12 月 8 日）每人自己做，不計入這份分工。
+請在姓名欄填上組員名字。
+姓名
+成員
+主責
+簡報段落（合共 10 分鐘）
+
+A
+教案
+學習目標 + 教學法（約 2.5 分鐘）
+
+B
+工作紙
+課堂活動 + 工作紙（約 2 分鐘）
+
+C
+工具
+人工智能概念 + 系統設計（約 3 分鐘）
+
+D
+簡報
+教育價值 + 可行性 + 倫理（約 2.5 分鐘）
+一、先一起定死的範圍（全員，第一次會議）
+對象：中五或中六，選修 Option C Algorithm and Programming，已懂一維陣列。
+一課只比較三種結構如何加入和移除，每種只走一個操作：
+Stack：push，學生看 top。
+Queue：enqueue，學生看 front 和 rear。
+Linear linked list：在指定位置 insert，學生看 head 和 next。
+公開試要的是用陣列模擬，不是 Python 的 append / pop，也不是真正的 pointer。pop、dequeue、delete 和學生自己寫完整程式，放到下一課，不放進這份教案。
+二、成員 A：教案
+寫完整教案：課題、對象、先備知識、學習目標、時間分配、教學流程、差異化、評估。
+寫教學法依據：用同一張陣列圖比較三者，每種結構只演示一個操作，避免學生混淆 top、front 和 next。
+根據成員 C 的說明，把「為何選這個工具」寫進教案。
+對照《課程及評估指引》選修 C 的用字：lists, stacks and queues in terms of arrays。
+三、成員 B：工作紙
+學生工作紙只用全員定好的那一組數字。
+三題逐步追蹤：push、enqueue、insert。每步要學生寫出陣列和指標。
+附教師答案，答案不印給學生。
+可加一題課後延伸，但註明不在這節課完成。
+題目分量必須是一節課做得到的。
+四、成員 C：可視化工具
+做一個逐步視覺化工具。學生按「下一步」，畫面顯示 top、front、rear 或 next 的改變。
+寫一頁系統設計：畫面有什麼、學生怎樣操作、哪一部分用了人工智能。用了就要寫明；如果只是動畫，就不要說成人工智能。
+用要點寫出「為何選這個工具」，交給成員 A 放進教案、交給成員 D 放進簡報。
+工具裡的數字必須和工作紙相同。
+五、成員 D：簡報、可行性、倫理
+做簡報和講稿，控制全組 10 分鐘，並預留 5 分鐘問答。
+寫三段內容：教育價值、可行性、倫理和社會影響。
+可行性要面對真實限制：一節課、學校電腦室、工具不必安裝複雜軟件。
+倫理要包括：老師核對人工智能產出；學生要用圖解釋答案，不能只抄工具或聊天機械人的結果。可引用教育局 2026 年《人工智能素養學習框架》。
+彙整參考資料，以及小組使用人工智能的聲明。
+合併最終檔案，提醒全員截止日期。
+六、交叉檢查
+A 檢查 B：工作紙有沒有超出一課範圍。
+B 檢查 C：工具例子和工作紙是不是同一組數字。
+C 檢查 D：簡報裡的系統描述和真實工具一不一致。
+D 檢查 A：教案的學習目標有沒有出現在簡報。
+七、問答時誰答
+課程和學習目標：成員 A。
+工作紙題目：成員 B。
+工具和系統：成員 C。
+可行性、倫理：成員 D。
+四人同時在場。被問到自己範圍以外的問題，先接一句，再交給主責的人。
+八、時間表
+9 月 29 日 23:59 前：確認組員名單已交 Google Form。
+10 月 6 日前：開第一次會，鎖定例子和工具形式。
+10 月 20 日前：教案、工作紙、工具初稿。
+11 月 2 日前：簡報、可行性、倫理完成，三份材料已用同一例子。
+11 月 8 日：全員彩排 10 + 5 分鐘。
+11 月 10 日 23:59：提交簡報材料。
+
+INT2065 Group Project — Division of Work (4 members)
+Topic: Teach stack, queue and linear linked list in one lesson (array implementation)
+Submit: lesson plan, worksheet, visualisation tool, 10-minute presentation + 5-minute Q&A
+Presentation materials due: 10 November 2026, 23:59
+How the work is split
+Each member owns one product and speaks for about 2 to 3 minutes.
+The tool is the heaviest technical job, so that member does not write the full lesson plan or worksheet.
+The lesson plan, worksheet and tool must use the same example, or the presentation will not match.
+The individual task (about 1,500 words, interview and reflection, due 8 December) is done by each person alone. It is not part of this split.
+Write each member's name in the blank.
+Name
+Member
+Owns
+Presentation slot (10 minutes in total)
+
+A
+Lesson plan
+Objectives + pedagogy (about 2.5 min)
+
+B
+Worksheet
+Lesson activities + worksheet (about 2 min)
+
+C
+Tool
+AI concepts + system design (about 3 min)
+
+D
+Slides
+Educational value + feasibility + ethics (about 2.5 min)
+1. Scope the whole group must lock in the first meeting
+Level: S.5 or S.6, Elective Option C Algorithm and Programming, students who already know one-dimensional arrays.
+One lesson only compares how the three structures add and remove data. One operation each:
+Stack: push. Students watch top.
+Queue: enqueue. Students watch front and rear.
+Linear linked list: insert at a given position. Students watch head and next.
+The public assessment expects an array simulation, not Python append / pop, and not real pointers. pop, dequeue, delete, and students writing full programs belong in the next lesson. Leave them out of this lesson plan.
+2. Member A — lesson plan
+Write the full lesson plan: topic, level, prior knowledge, objectives, timing, procedure, differentiation, assessment.
+Write the pedagogical ground: one array diagram is used to compare the three structures, and only one operation is demonstrated for each, so students do not mix up top, front and next.
+Using Member C's notes, write "why we chose this tool" into the lesson plan.
+Match the wording of the ICT C&A Guide, Elective C: lists, stacks and queues in terms of arrays.
+3. Member B — worksheet
+Use only the example the group agreed.
+Three step-by-step traces: push, enqueue, insert. At each step the student writes the array and the pointers.
+Provide a teacher answer key. Do not print it for students.
+One extension item may be added if it is marked as homework, not as classwork for this lesson.
+The worksheet must be finishable in one lesson.
+4. Member C — visualisation tool
+Build a step-by-step visualiser. Each click on "next" shows the change in top, front, rear or next.
+Write a one-page system design: what is on screen, what the student does, and which part uses AI. If a part uses AI, say so. If a part is only animation, do not call it AI.
+Draft bullet points on why this tool was chosen. Pass them to Member A for the lesson plan and to Member D for the slides.
+The numbers in the tool must be the same as the numbers on the worksheet.
+5. Member D — slides, feasibility, ethics
+Build the slide deck and speaker notes. Keep the group to 10 minutes, and leave 5 minutes for questions.
+Write three sections: educational value, feasibility, ethical and social implications.
+Feasibility must face real limits: one lesson, a school computer room, and no complicated installation.
+Ethics must include: the teacher checks any AI output; students explain answers from the diagram and do not copy the tool or a chatbot. The EDB AI Literacy Learning Framework (2026) can be cited.
+Compile references and a short statement of how the group used AI.
+Merge the final files and remind the group of the deadline.
+6. Cross-check
+A checks B: the worksheet does not go beyond one lesson.
+B checks C: the tool uses the same example as the worksheet.
+C checks D: the system described on the slides matches the real tool.
+D checks A: the lesson objectives appear on the slides.
+7. Who answers questions
+Curriculum and objectives: Member A.
+Worksheet items: Member B.
+Tool and system: Member C.
+Feasibility and ethics: Member D.
+All four stay for the Q&A. If a question is outside your part, take it in one sentence, then hand it to the owner.
+8. Timeline
+By 29 September, 23:59: confirm the member list is submitted on the Google Form.
+By 6 October: first meeting. Lock the example and the form of the tool.
+By 20 October: first drafts of the lesson plan, worksheet and tool.
+By 2 November: slides, feasibility and ethics done; all three products use the same example.
+8 November: full rehearsal of the 10 + 5 minutes.
+10 November, 23:59: submit the presentation materials.
+

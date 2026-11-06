@@ -1,0 +1,25 @@
+﻿# INT2065 A1 Full Package Audit — 2026-11-06
+
+## A1 submit pack (交 11/10 23:59 簡報材料；Moodle Assign 系統截止 11/24)
+
+1. LessonPlan_StackQueueLinkedList_REFINED.docx
+2. Worksheet_StackQueueLinkedList_REFINED.docx
+3. INT2065_Presentation_REFINED.pptx
+4. visualiser/ (index.html) + root index.html redirect
+5. 小組分工_中英.docx（輔助，建議一併交）
+
+NOT A1 deliverables (clutter — keep but do not submit as A1): LessonPlanOSI7Layer.docx, OSI_7_Layer_*, Lesson Plan (Example).docx, Lesson plan - ICT Smart TV.docx, Course syllabus / ICT CA Guide / Foundations PDFs (reference only), whatNeedTDo.txt, _audit_extract/, *.bak / *_BACKUP / *_preAudit
+
+## Changes applied this audit
+- visualiser/index.html (bak: visualiser/index.html.bak): hide Circular in Lesson mode; footer + labels
+- LessonPlan_*_REFINED.docx: Group members blanks; exit strip unify; FRONT convention
+- Worksheet_*_REFINED.docx: PRINT CUTOFF banner + stronger do-not-print line
+- 小組分工_中英.docx: ADD-only wording; Circular caveat
+- INT2065_Presentation_REFINED.pptx (backup: INT2065_Presentation_BACKUP.pptx): name blanks; Circular caveat; social implication
+
+## Remaining human steps
+- Fill A–D names (教案 / 分工表 / 簡報 slide 1)
+- Fill Teacher / Date
+- 11/8 rehearsal 10+5
+- Print worksheet WITHOUT answer key (cut at PRINT CUTOFF)
+- Pack and submit materials by 2026-11-10 23:59 — do not auto-submit Moodle

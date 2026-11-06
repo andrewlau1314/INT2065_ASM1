@@ -199,7 +199,7 @@
     <span class="mode-label">Structure</span>
     <button type="button" id="mode-stack" aria-pressed="true">Stack</button>
     <button type="button" id="mode-queue" aria-pressed="false">Queue</button>
-    <button type="button" id="mode-circular" aria-pressed="false">Circular queue</button>
+    <button type="button" id="mode-circular" aria-pressed="false" title="Extension only — not used in this lesson">Circular queue (extension)</button>
     <button type="button" id="mode-list" aria-pressed="false">Linked list</button>
   </div>
   <div class="panel">
@@ -229,7 +229,7 @@
     <div class="hint" id="hint" role="status"></div>
     <div class="hint" id="status" role="status" hidden></div>
   </div>
-  <footer>Lesson mode traces 15, 28 and 41. Free build starts empty. Hints are fixed sentences, checked against the lesson-plan tables. This page does not call an AI model. In lesson mode, arrow keys move Back and Next.</footer>
+  <footer>Lesson mode: Stack, Queue and Linked list only (15, 28, 41). Circular queue is hidden in Lesson mode and kept for Free build / later lessons. Hints are fixed sentences checked against the lesson-plan tables. This page does not call an AI model.</footer>
 </div>
 <script>
 (function () {
@@ -270,8 +270,8 @@
     },
     circular: {
       name: "Circular queue",
-      note: "Q[1..6]. REAR wraps from cell 6 back to cell 1.",
-      aside: "COUNT is the number of items.\nif COUNT = 6 then output \"queue overflow\"\nThe worksheet uses the linear Queue button.",
+      note: "Extension only — not used in this lesson. Use Queue for the worksheet.",
+      aside: "Not part of today's lesson.\nCOUNT is the number of items.\nif COUNT = 6 then output \"queue overflow\"\nThe worksheet uses the linear Queue button.",
       kind: "circular",
       snaps: [
         {
@@ -1091,7 +1091,12 @@
       hintEl.textContent = hintOpen ? s.hint : "";
     }
     ["stack", "queue", "circular", "list"].forEach(function (id) {
-      document.getElementById("mode-" + id).setAttribute("aria-pressed", id === modeId ? "true" : "false");
+      var btn = document.getElementById("mode-" + id);
+      btn.setAttribute("aria-pressed", id === modeId ? "true" : "false");
+      if (id === "circular") {
+        btn.hidden = play === "lesson";
+        btn.disabled = play === "lesson";
+      }
     });
     document.getElementById("play-lesson").setAttribute("aria-pressed", play === "lesson" ? "true" : "false");
     document.getElementById("play-free").setAttribute("aria-pressed", play === "free" ? "true" : "false");
@@ -1100,6 +1105,7 @@
   function chooseStructure(id) {
     cancelPlay();
     hintOpen = false;
+    if (play === "lesson" && id === "circular") return;
     if (play === "free") {
       freeState[modeId] = free;
       freeStatus[modeId] = statusText;
@@ -1125,6 +1131,7 @@
     else {
       document.getElementById("op-value").blur();
       document.getElementById("op-index").blur();
+      if (modeId === "circular") { modeId = "queue"; step = 0; }
     }
     render();
   }

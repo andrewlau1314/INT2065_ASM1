@@ -1,0 +1,231 @@
+
+Lesson Plan
+Adding an item to a stack, a queue and a linear linked list
+Lesson information
+Subject
+Information and Communication Technology, HKDSE Elective Option C — Algorithm and Programming
+Level
+S.5 or S.6
+Topic
+Stack, queue and linear linked list stored in arrays: adding an item
+Teacher
+
+Date
+
+Duration
+60 minutes, one lesson
+Curriculum outcome this lesson starts
+Construct lists, stacks and queues in terms of arrays. (ICT C&amp;A Guide, Elective Option C, Programming.)
+Assumptions used in this plan.
+The class already knows a one-dimensional array, assignment, and a for-loop, from the Compulsory Part, Module D.
+Arrays in this lesson are numbered from 1, as in HKDSE pseudocode. The value 0 means “empty” for TOP and REAR, and “null” for NEXT.
+This lesson only adds data: push, enqueue, and one insert. pop, dequeue, delete, and student-written programs are the next lesson.
+The lesson is timed at 60 minutes so the three traces, the comparison and the exit line can all be finished.
+Learning objectives
+By the end of the lesson, students can:
+State that a stack, a queue and a linear linked list can be stored in arrays.
+Trace three push steps and write the new value of TOP.
+Trace three enqueue steps and write FRONT and REAR.
+Trace one insert on a linear linked list and write the two NEXT changes, in the safe order.
+Say, for each structure, where the new item is written and which pointer moves.
+Prior knowledge
+Students can read and update a one-dimensional array by index.
+Students can follow an assignment statement written in pseudocode, including X ← X + 1.
+Students have not yet been taught stack, queue or linked-list operations. The words TOP, FRONT, REAR, HEAD and NEXT are new in this lesson.
+Shared example
+The same three values, 15, 28 and 41, are used for the stack, the queue and the linked list. The class compares pointers rather than a new set of numbers. The worksheet and the visualiser use these tables and no others.
+Stack.  S[1..6], TOP = 0 at the start.
+Step
+Action
+TOP
+S[1]
+S[2]
+S[3]
+S[4]
+S[5]
+S[6]
+start
+—
+0
+
+1
+push 15
+1
+15
+
+2
+push 28
+2
+15
+28
+
+3
+push 41
+3
+15
+28
+41
+
+Pseudocode traced for each push. The overflow line is read aloud once and is not traced, because TOP never reaches 6 in this lesson.
+if TOP = 6 then
+    output "stack overflow"
+else
+    TOP ← TOP + 1
+    S[TOP] ← value
+Queue.  Q[1..6], FRONT = 1 and REAR = 0 at the start.
+Step
+Action
+FRONT
+REAR
+Q[1]
+Q[2]
+Q[3]
+start
+—
+1
+0
+
+1
+enqueue 15
+1
+1
+15
+
+2
+enqueue 28
+1
+2
+15
+28
+
+3
+enqueue 41
+1
+3
+15
+28
+41
+Pseudocode traced for each enqueue. FRONT is not assigned. It stays 1 because no item leaves.
+if REAR = 6 then
+    output "queue overflow"
+else
+    REAR ← REAR + 1
+    Q[REAR] ← value
+Linear linked list.  A node array with DATA and NEXT. NEXT = 0 means null. HEAD = 1 throughout. Node 3 is the free node used for the new value. Node 4 is unused and stays empty.
+Index
+DATA before
+NEXT before
+DATA after
+NEXT after
+1
+15
+2
+15
+3
+2
+41
+0
+41
+0
+3
+—
+0
+28
+2
+4
+—
+0
+—
+0
+The list before the insert is 15 → 41 → null. Insert 28 between 15 and 41. The two assignments must stay in this order.
+DATA[3] ← 28
+NEXT[3] ← NEXT[1]     // NEXT[1] is still 2, so 28 points at 41
+NEXT[1] ← 3           // 15 now points at 28
+HEAD stays 1. If NEXT[1] ← 3 is done first, the only stored arrow from 15 to 41 is overwritten and the node holding 41 is lost. That order is the teaching point of the pair task.
+Pedagogical ground
+All three structures are drawn as one array. Students compare where the new value is written. They are not asked to learn three unrelated diagrams.
+Each structure contributes one new operation. Removing an item is postponed, so TOP, FRONT, REAR and NEXT are not all changing on the same picture.
+The teacher traces the first step on the visualiser. Students write the next step on the worksheet before the tool reveals it. The linked-list insert is the only change that rewrites two pointers, so it has the longest slot and is done in pairs.
+The hint on the tool is one sentence. It appears after the student has already written a prediction. The worksheet is filled by the student, not by the tool.
+The visualiser, and why this tool
+Index movement is invisible on a static slide. One click should show one change, so students can see TOP, REAR or NEXT move. Students still commit an answer before that change appears.
+The tool is a browser page. Nothing is installed on the school computers. One screen has three modes: Stack, Queue and Linked list. A Next control reveals either the new value or one pointer. The pictures use 15, 28 and 41 and match the tables in this plan.
+Each step has one hint sentence, for example “Which cell does REAR move to?”. The teacher may draft those sentences with a generative model. Before the lesson the teacher checks every sentence against the tables above and saves the approved sentence in the page. During the lesson the button shows the saved sentence. It does not call a model live, so a network failure cannot change the hint, and an unchecked sentence cannot reach the class.
+The tool does not fill the worksheet and does not show the full next row before the student has written it.
+Resources
+Projector and one browser with the visualiser already open on the three modes.
+Student worksheet using only the tables in this plan. The answer tables above are not printed on the student sheet.
+A small pointer card for students who need it: stack → TOP; queue, item coming in → REAR; linked list → change NEXT, and copy the old NEXT first.
+Exit-ticket strip, one per student. The numbers on the strip are 7, 9 and 4, not 15, 28 and 41.
+Assessment
+Assessment in this lesson is formative. There is no test score.
+The three traces: TOP after each push; FRONT and REAR after each enqueue; DATA and NEXT after the insert.
+The comparison table completed from the worksheet, without looking back at the visualiser.
+The exit line. A new stack is shown: S[1] = 7, S[2] = 9, TOP = 2. Students name the structure, then write TOP and the array after one push of 4. Expected line: stack; TOP = 3; S[1] = 7, S[2] = 9, S[3] = 4.
+The teacher collects the worksheet and the exit line. Errors to look for: writing the new stack value at the left end; changing FRONT during enqueue; doing NEXT[1] ← 3 before saving the old NEXT.
+Instructional process
+Times are for a 60-minute lesson. The visualiser stays on the same three values. The teacher does not open a second example.
+Time
+Teacher activity
+Student activity
+Objective and resources
+0–5 min
+Show one array of six cells with values already in the first two cells. Ask: “If I insert a new value between them, what happens to the later cells?” Take two answers. The expected idea is that later cells must slide along. Say that today the class will add a value in three structures, and in each one the later values stay where they are.
+Answer from what they know about arrays. No notes yet.
+Prior knowledge. Projector.
+5–12 min
+Name the three structures with one analogy each, and write the pointer names on the board. Stack: a pile of plates, add at the top, pointer TOP. Queue: a lunch line, join at the rear, pointers FRONT and REAR. Linked list: a trail of arrows, each node stores the index of the next node, pointers HEAD and NEXT. Say clearly that today only adds data. Nothing is removed.
+Copy the five pointer names and the three analogies into the margin of the worksheet.
+Objective 1.
+12–22 min
+Open Stack mode. S[1..6], TOP = 0. Read the push pseudocode. Trace push 15 aloud: TOP becomes 1, S[1] becomes 15. Reveal only that row. Cover the next row. Ask students to write TOP and the array for push 28, then reveal. Repeat for push 41. If a student inserts at the left, point back to TOP. Read the overflow line once. Do not trace it.
+Copy the first row. Write the second and third rows before each reveal. Correct the row if it disagrees with the tool.
+Objective 2. Visualiser, worksheet stack trace.
+22–33 min
+Switch to Queue mode. Q[1..6], FRONT = 1, REAR = 0. Ask where 15 is written before revealing: expected answer is Q[1], REAR = 1, FRONT still 1. Reveal, then repeat the predict-and-reveal cycle for 28 and 41. After the third enqueue ask: “Why is FRONT still 1?” Expected answer: no item has left the queue. FRONT is not in the enqueue pseudocode.
+Write each enqueue row before it is revealed. Answer the FRONT question in one sentence on the worksheet.
+Objective 3. Visualiser, worksheet queue trace.
+33–48 min
+Switch to Linked list mode. Show nodes 15 → 41 → null, HEAD = 1, node 3 free. Say the class will insert 28 between 15 and 41. Model only the first two lines: DATA[3] ← 28 and NEXT[3] ← NEXT[1]. Stress that NEXT[1] is still 2, so 28 points at 41. Pairs then write NEXT[1] ← 3. Reveal only after pairs have written it. Ask what is lost if that line is done first. Expected answer: the arrow from 15 to 41.
+Watch the first NEXT change. In pairs, write the second NEXT change. Then check against the tool. One pair reports the lost-arrow answer.
+Objective 4. Visualiser, worksheet list trace. Longest slot.
+48–55 min
+Put a blank three-row table on the board: structure; where the new value is written; which pointer moves. Rows are stack, queue, linked list. Do not show the visualiser while students write. Take one answer per row. Expected answers are in the table below this procedure.
+Fill the three rows from the worksheet they just completed. Close the visualiser window.
+Objective 5. Board and worksheet.
+55–60 min
+Give the exit strip: a stack with 7 and 9, TOP = 2. Students name the structure and write the result of push 4. Collect the worksheet and the strip. Name the next lesson in one sentence: pop, dequeue and delete. Say one sentence on the hint: the sentence on the button was checked before class; the trace still has to be explained from the arrows.
+Write the exit line. Hand in the worksheet and the strip.
+Check of objectives 1 and 2. Ethics remark. Exit strip.
+Comparison table: expected answers, for the teacher. This table is not printed for students.
+Structure
+Where the new value is written
+Pointer that moves
+Stack
+S[TOP], after TOP increases by 1
+TOP
+Queue
+Q[REAR], after REAR increases by 1
+REAR. FRONT stays 1.
+Linked list
+DATA[3]
+NEXT[3], then NEXT[1]. HEAD stays 1.
+Differentiation
+Students who are still unsure which pointer belongs to which structure keep the pointer card on the desk. During the linked-list task they may look again at the two lines the teacher already modelled. They still write NEXT[1] ← 3 themselves.
+Students who finish the exit line early are asked one oral question: after one pop, what is TOP if it is now 3? Expected answer: 2. The question is not written on the worksheet and is not required.
+Pairs for the linked-list task are mixed. One student reads the current NEXT, the other writes the assignment. They swap roles if the pair also attempts the oral question.
+Remarks
+What this lesson deliberately leaves out
+pop, dequeue and delete are named at the end and then stopped. Students do not write programs today. Overflow is read once so the class knows the test exists; it is not traced, because the example never fills the array. A second numerical example is not used. The exit strip is the only new set of numbers, and it checks the stack only.
+Learning and teaching strategy
+The lesson is a worked example followed by completion, repeated three times, then a comparison with the tool switched off. Questioning is used at the array opening, at FRONT, and at the lost-arrow point. The visualiser is the common picture; the worksheet is the record the teacher collects.
+Artificial intelligence and ethics
+The visualiser is the learning tool. The generative model, if one is used, is used only before the lesson to draft the one-sentence hints. The teacher checks each hint against the answer tables in this plan and saves the approved wording. In class the page shows that saved wording. Students are told, in the final minute, that a hint is not the answer and that the trace has to be explained from the arrows.
+This matches the expectation in the Education Bureau’s AI Literacy Learning Framework for Primary and Secondary Schools (2026): the teacher remains responsible for the material students see, and students do the reasoning themselves.
+Before the lesson
+Open all three modes and check that the steps match the tables in this plan.
+Read every saved hint once against those tables.
+Print the worksheet without this answer section. Print pointer cards for the students who need them. Print the exit strip on 7, 9 and 4.
+References
+Curriculum Development Council and Hong Kong Examinations and Assessment Authority. Information and Communication Technology Curriculum and Assessment Guide (Secondary 4–6), Elective Part, Option C Algorithm and Programming.
+Education Bureau. (2026). AI Literacy Learning Framework for Primary and Secondary Schools. https://www.edb.gov.hk/en/edu-system/primary-secondary/applicable-to-primary-secondary/it-in-edu/debp.html

@@ -1,0 +1,195 @@
+﻿===== SLIDE 1 =====
+INT2065  ·  GROUP PROJECT
+10 MINUTES  +  5 MINUTES
+S.5 / S.6   ·   ELECTIVE OPTION C
+One change
+at a time
+A lesson and a browser visualiser for adding an item to a stack, a queue and a linear linked list.
+MEMBER  A
+Objectives
+and pedagogy
+MEMBER  B
+Lesson
+and worksheet
+MEMBER  C
+AI and
+system design
+MEMBER  D
+Value, feasibility,
+ethics
+Group members  A: ________  B: ________  C: ________  D: ________
+
+===== SLIDE 2 =====
+02    ·    MEMBER A    ·    WHY THIS LESSON
+02  /  11
+INT2065  ·  GROUP PROJECT
+THE LEARNING PROBLEM
+The index moves, and students cannot see it
+01
+A finished diagram
+A slide that shows the whole row lets students copy TOP, REAR or NEXT without knowing which cell changed.
+02
+One change
+The page turns one pointer, or one cell, amber. The next change stays hidden.
+03
+Write first
+Students write that cell on the worksheet. Then the teacher presses Next.
+Same three values on the lesson plan, the worksheet and the page:  15,  28,  41.
+
+===== SLIDE 3 =====
+03    ·    MEMBER A    ·    OBJECTIVES
+03  /  11
+INT2065  ·  GROUP PROJECT
+ELECTIVE OPTION C
+What students can do after this lesson
+1
+State that a stack, a queue and a linear linked list can be stored in arrays.
+2
+Trace three pushes and write the new value of TOP.
+3
+Trace three enqueues and write FRONT and REAR.
+4
+Trace one insert, and write the two NEXT changes in the safe order.
+5
+Say where the new value is written, and which pointer moves.
+
+===== SLIDE 4 =====
+04    ·    MEMBER A    ·    PEDAGOGY
+04  /  11
+INT2065  ·  GROUP PROJECT
+WRITE, THEN REVEAL
+How the lesson keeps the three structures apart
+One picture
+All three structures are drawn as an array. Students compare where the new value is written.
+One operation
+Today only adds: push, enqueue, and one insert. Removing an item is postponed.
+Write, then reveal
+The teacher traces the first step. Students complete the next step before the page shows it.
+The long slot
+The insert rewrites two pointers. It has 15 minutes, and students do it in pairs.
+
+===== SLIDE 5 =====
+05    ·    MEMBER B    ·    THE LESSON
+05  /  11
+INT2065  ·  GROUP PROJECT
+60 MINUTES
+Where the hour goes
+0–5
+One array
+What happens to later cells if a value is inserted between them?
+5–12
+Five names
+TOP, FRONT, REAR, HEAD, NEXT. Today only adds data.
+12–22
+Stack
+Push 15 is shown. Students predict push 28, then push 41.
+22–33
+Queue
+Enqueue the same three values. Ask why FRONT stays 1.
+33–48
+Linked list
+Insert 28 between 15 and 41. Pairs write the second NEXT.
+48–55
+Compare
+Three rows, from the worksheet. The visualiser is closed.
+55–60
+Exit
+A new stack, 7 and 9. Push 4. Name the next lesson.
+
+===== SLIDE 6 =====
+06    ·    MEMBER B    ·    WORKSHEET
+06  /  11
+INT2065  ·  GROUP PROJECT
+BLUE IS GIVEN
+The sheet shows the worked step only
+PRINTED IN BLUE
+Given before the class writes
+Stack: the start row, and push 15.
+Queue: the start row only. FRONT is 1, REAR is 0.
+List: the before table, DATA[3] and NEXT[3].
+The five pointer prompts, without the names.
+LEFT YELLOW
+Written before Next
+Push 28 and push 41.
+All three enqueue rows, and why FRONT stays 1.
+NEXT[1], the after table, and what is lost if the order is reversed.
+The comparison, then the exit strip.
+
+===== SLIDE 7 =====
+07    ·    MEMBER C    ·    AI CONCEPTS
+07  /  11
+INT2065  ·  GROUP PROJECT
+CHECKED, THEN SAVED
+The model drafts. The teacher decides.
+1
+Draft
+Before the lesson, a generative model may propose one hint sentence for each click.
+2
+Check
+The teacher matches every sentence to the answer tables in the lesson plan.
+3
+Save
+The approved sentence is stored in the page. The lesson does not call a model.
+A hint asks a question. It does not print the next number, so it cannot be copied into the yellow cell.
+
+===== SLIDE 8 =====
+08    ·    MEMBER C    ·    SYSTEM DESIGN
+08  /  11
+INT2065  ·  GROUP PROJECT
+ONE CLICK, ONE CHANGE
+What the teacher operates
+Page
+One HTML file. Open it in a browser. Nothing is installed and nothing is sent online.
+Modes
+Stack, Queue, Linked list in Lesson mode. Circular queue is Free-build / extension only — not taught this lesson.
+Next
+Reveals either a pointer or one cell. Amber marks what just changed.
+Back / Reset
+Back undoes one change. Reset returns to the start. Hint closes when the step changes.
+Stack and queue: two clicks for one worksheet row — the pointer, then the value.    List: DATA[3], then NEXT[3], then NEXT[1].
+
+===== SLIDE 9 =====
+09    ·    MEMBER D    ·    VALUE AND FEASIBILITY
+09  /  11
+INT2065  ·  GROUP PROJECT
+ONE PROJECTOR
+Why the lesson is worth giving
+Educational value
+Students watch one index move, then account for it in writing.
+The plan, the sheet and the page cannot drift apart: one example.
+The collected sheet shows the trace. The page is not the assessment.
+Feasibility
+60 minutes on one projector. A 40-minute period is too short for three traces.
+No account, no install, no live network. Copy the file and open it.
+If the file will not open, the worksheet tables still carry the lesson.
+
+===== SLIDE 10 =====
+10    ·    MEMBER D    ·    ETHICS
+10  /  11
+INT2065  ·  GROUP PROJECT
+EDB AI LITERACY, 2026
+The teacher stays responsible for the sentence
+Before class
+Every hint is read against the answer key. A sentence that gives the next number is rewritten.
+In the last minute
+Students are told that a hint is not the answer. The trace has to be explained from the arrows.
+The framework
+EDB's AI Literacy Learning Framework (2026) keeps the teacher responsible for what learners see, and keeps the reasoning with the learner.
+Social implication: the file runs offline on a projector, so a school without accounts or stable Wi-Fi can still run the lesson; if the page fails, the printed worksheet tables carry the same traces.
+
+===== SLIDE 11 =====
+11    ·    QUESTIONS
+11  /  11
+INT2065  ·  GROUP PROJECT
+FIVE MINUTES
+Who answers
+A
+Curriculum and the five objectives
+B
+Worksheet items and the answer key
+C
+The page, the clicks, and the hints
+D
+Time, the school lab, and ethics
+
+

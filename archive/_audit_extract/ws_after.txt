@@ -1,0 +1,302 @@
+﻿
+Worksheet
+Adding an item to a stack, a queue and a linear linked list
+S.5 / S.6 ICT    ·    one lesson    ·    arrays numbered from 1
+Name
+
+Class
+
+Date
+
+The value 0 means empty or null. Today you only add data. Write each yellow cell before the teacher reveals that step.
+Blue cells are given. Yellow cells are for you.
+A.  Pointer names
+Write the pointer used in each case.
+Stack: the pointer that moves when you push.
+
+Queue: the pointer of the place from which an item leaves.
+
+Queue: the pointer that moves when you enqueue.
+
+Linked list: the pointer to the first node.
+
+Linked list: the arrow stored inside a node.
+
+B.  Stack
+S[1..6], TOP starts at 0. Row 1 is done. Write rows 2 and 3 before they are revealed. S[4], S[5] and S[6] stay empty.
+Step
+Action
+TOP
+S[1]
+S[2]
+S[3]
+start
+—
+0
+
+
+
+1
+push 15
+1
+15
+
+
+2
+push 28
+
+
+
+
+3
+push 41
+
+
+
+
+Reminder, not a program to write:    TOP ← TOP + 1      S[TOP] ← value
+C.  Queue
+Q[1..6]. At the start, FRONT = 1 and REAR = 0. Write every yellow cell before that step is revealed. Q[4], Q[5] and Q[6] stay empty.
+Step
+Action
+FRONT
+REAR
+Q[1]
+Q[2]
+Q[3]
+start
+—
+1
+0
+
+
+
+1
+enqueue 15
+
+
+
+
+
+2
+enqueue 28
+
+
+
+
+
+3
+enqueue 41
+
+
+
+
+
+Reminder:    REAR ← REAR + 1      Q[REAR] ← value
+Why is FRONT still 1 after the three enqueues?
+ 
+D.  Linear linked list
+Do this in pairs. One student reads the current NEXT. The other writes the assignment.
+HEAD = 1. The list now is 15 → 41 → null. Insert 28 between 15 and 41. NEXT = 0 means null.
+Before the insert
+Index
+DATA
+NEXT
+1
+15
+2
+2
+41
+0
+3
+—
+0
+4
+—
+0
+The first two lines are already done. Copy them, then write the third line before it is revealed.
+DATA[3] ← 28
+
+NEXT[3] ← NEXT[1]
+
+NEXT[1] ←
+
+After the insert. Complete every yellow cell.
+Index
+DATA
+NEXT
+1
+
+
+2
+
+
+3
+
+
+4
+
+
+If NEXT[1] ← 3 is written first, what is lost?
+ 
+E.  Comparison
+Close the visualiser. Fill this table from your own rows above.
+Structure
+Where the new value is written
+Pointer that moves
+Stack
+
+
+Queue
+
+
+Linked list
+
+
+
+F.  Exit strip
+Wait for the teacher. These numbers are not 15, 28 and 41.
+
+S[1]
+S[2]
+S[3]
+now
+7
+9
+
+TOP = 2
+(a)   Name of this structure
+
+(b)   After one push of 4, TOP =
+
+(c)   S[1] =
+
+(d)   S[2] =
+
+(e)   S[3] =
+
+Hand in this worksheet and the exit strip.
+
+========== PRINT CUTOFF — DO NOT PRINT THE ANSWER KEY FOR STUDENTS ==========
+Teacher answer key
+Do not print this page for students. Print pages before the PRINT CUTOFF only. Keep the answer key for the teacher.
+Answers match the lesson plan. The same values are 15, 28 and 41, except the exit strip.
+A.  Pointer names
+Prompt
+Answer
+Stack: the pointer that moves when you push.
+TOP
+Queue: the pointer of the place from which an item leaves.
+FRONT
+Queue: the pointer that moves when you enqueue.
+REAR
+Linked list: the pointer to the first node.
+HEAD
+Linked list: the arrow stored inside a node.
+NEXT
+B.  Stack
+Step
+Action
+TOP
+S[1]
+S[2]
+S[3]
+start
+—
+0
+
+
+
+1
+push 15
+1
+15
+
+
+2
+push 28
+2
+15
+28
+
+3
+push 41
+3
+15
+28
+41
+C.  Queue
+Step
+Action
+FRONT
+REAR
+Q[1]
+Q[2]
+Q[3]
+start
+—
+1
+0
+
+
+
+1
+enqueue 15
+1
+1
+15
+
+
+2
+enqueue 28
+1
+2
+15
+28
+
+3
+enqueue 41
+1
+3
+15
+28
+41
+Why FRONT is still 1: no item has left the queue. Enqueue does not assign FRONT.
+D.  Linear linked list
+Student line:  NEXT[1] ← 3.  HEAD stays 1.
+Order that must be kept: DATA[3] ← 28, then NEXT[3] ← NEXT[1] (still 2), then NEXT[1] ← 3.
+Index
+DATA after
+NEXT after
+1
+15
+3
+2
+41
+0
+3
+28
+2
+4
+—
+0
+If NEXT[1] ← 3 is written first, the arrow from 15 to 41 is overwritten. The node holding 41 is lost.
+E.  Comparison
+Structure
+Where the new value is written
+Pointer that moves
+Stack
+S[TOP], after TOP increases by 1
+TOP
+Queue
+Q[REAR], after REAR increases by 1
+REAR. FRONT stays 1.
+Linked list
+DATA[3]
+NEXT[3], then NEXT[1]. HEAD stays 1.
+F.  Exit strip
+Structure: stack.
+After push 4:  TOP = 3,   S[1] = 7,   S[2] = 9,   S[3] = 4.
+Errors to look for
+A new stack value written at the left end. FRONT changed during enqueue. NEXT[1] changed before the old NEXT is saved.
+
