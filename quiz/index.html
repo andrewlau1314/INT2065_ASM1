@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Structures Practice Quiz: Stack, Queue, Linked List</title>
+  <style>
+    :root {
+      --bg: #0f1b2d;
+      --bg-2: #132236;
+      --surface: #173049;
+      --surface-2: #1c3a56;
+      --border: #2a4a6b;
+      --text: #eef3f8;
+      --muted: #b7c4d4;
+      --gold: #e8c56b;
+      --gold-dim: #c9a94a;
+      --accent: #6ea8ff;
+      --ok: #8fd9a8;
+      --ok-bg: #163527;
+      --ok-border: #2e7a4c;
+      --bad: #f0a3a3;
+      --bad-bg: #3a1c22;
+      --bad-border: #8a3a46;
+      --shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    body {
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse at top, #173049 0%, var(--bg) 58%);
+    }
+
+    .wrap {
+      width: min(860px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 80px;
+    }
+
+    header.hero {
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.55rem, 2.4vw, 2.05rem);
+      line-height: 1.25;
+      font-weight: 700;
+      margin: 0 0 10px;
+      color: #f7f4ea;
+    }
+
+    .lede {
+      color: var(--muted);
+      margin: 0 0 8px;
+      max-width: 46em;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin: 0;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px 20px;
+      margin: 16px 0;
+    }
+
+    .id-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    label.field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.86rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    input[type="text"] {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    input[type="text"]:focus {
+      outline: 2px solid var(--gold);
+      outline-offset: 1px;
+      border-color: var(--gold-dim);
+    }
+
+    .rules {
+      margin: 0;
+      padding-left: 1.15em;
+      color: var(--muted);
+    }
+
+    .rules li { margin: 0.25em 0; }
+    .rules strong { color: var(--text); font-weight: 650; }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 8px 0 4px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .bar {
+      height: 8px;
+      background: #102033;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #c9a94a, #e8c56b);
+      transition: width 0.2s ease;
+    }
+
+    .q {
+      scroll-margin-top: 16px;
+    }
+
+    .q-num {
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+    }
+
+    .stem {
+      margin: 0 0 14px;
+      font-size: 1.05rem;
+    }
+
+    .diagram {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .diagram .path {
+      font-family: Georgia, "Times New Roman", serif;
+      color: #f7f4ea;
+      font-size: 1.05rem;
+      margin: 0 0 8px;
+    }
+
+    table.arr {
+      border-collapse: collapse;
+      width: auto;
+      min-width: 240px;
+      font-variant-numeric: tabular-nums;
+      background: var(--bg-2);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    table.arr th, table.arr td {
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      text-align: center;
+    }
+
+    table.arr th {
+      background: #14283d;
+      color: var(--gold);
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .opt {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .opt:hover {
+      border-color: #3c6a96;
+      background: #20405e;
+    }
+
+    .opt:focus-within {
+      outline: 2px solid var(--gold);
+      outline-offset: 1px;
+    }
+
+    .opt input {
+      margin-top: 4px;
+      accent-color: var(--gold-dim);
+      width: 18px;
+      height: 18px;
+    }
+
+    .letter {
+      font-weight: 700;
+      color: var(--gold);
+      margin-right: 0.15em;
+    }
+
+    .q.correct .opt.chosen {
+      background: var(--ok-bg);
+      border-color: var(--ok-border);
+    }
+
+    .q.wrong .opt.chosen {
+      background: var(--bad-bg);
+      border-color: var(--bad-border);
+    }
+
+    .q.wrong .opt.is-key,
+    .q.correct .opt.is-key {
+      box-shadow: inset 3px 0 0 var(--ok);
+    }
+
+    .feedback {
+      display: none;
+      margin: 12px 0 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+    }
+
+    .q.graded .feedback { display: block; }
+
+    .q.correct .feedback {
+      background: var(--ok-bg);
+      border: 1px solid var(--ok-border);
+      color: var(--ok);
+    }
+
+    .q.wrong .feedback {
+      background: var(--bad-bg);
+      border: 1px solid var(--bad-border);
+      color: #ffd4d4;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 11px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    button:focus {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    #submit-btn {
+      background: var(--gold);
+      color: #1a1406;
+    }
+
+    #submit-btn:hover { background: #f1d17d; }
+
+    #reset-btn, #print-btn {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    #reset-btn:hover, #print-btn:hover {
+      border-color: var(--gold-dim);
+    }
+
+    .warn {
+      display: none;
+      color: #ffd4d4;
+      font-size: 0.92rem;
+    }
+
+    #results {
+      display: none;
+      background: linear-gradient(180deg, #1b3a2a 0%, var(--surface) 58%);
+      border-color: #2e7a4c;
+    }
+
+    #results.show { display: block; }
+
+    #results h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      margin: 0 0 8px;
+      font-size: 1.45rem;
+    }
+
+    .score-line {
+      font-size: 1.25rem;
+      margin: 0 0 6px;
+    }
+
+    .score-line strong { color: var(--gold); }
+
+    .who {
+      color: var(--muted);
+      margin: 0 0 4px;
+    }
+
+    footer {
+      margin-top: 28px;
+      color: #8ea0b5;
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 640px) {
+      html, body { font-size: 16px; }
+      .wrap { width: min(860px, calc(100% - 20px)); padding: 18px 0 64px; }
+      .id-grid { grid-template-columns: 1fr; }
+      .card { padding: 16px; }
+      .opt { padding: 14px 12px; }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #111;
+      }
+      .wrap { width: auto; padding: 0; }
+      .card, #results, .q, table.arr, .opt {
+        background: #fff;
+        color: #111;
+        box-shadow: none;
+        border-color: #ccc;
+      }
+      .lede, .note, .rules, .diagram, .who, label.field, .muted, footer {
+        color: #333;
+      }
+      h1, .stem, .score-line, .path { color: #000; }
+      .eyebrow, .q-num, .letter, .score-line strong { color: #6a5208; }
+      input[type="text"] { border-color: #999; color: #111; background: #fff; }
+      .q.correct .feedback { color: #14532d; background: #edf8ef; border-color: #86c99a; }
+      .q.wrong .feedback { color: #7f1d1d; background: #fdecec; border-color: #e7a0a0; }
+      #submit-btn, #reset-btn, #print-btn, .warn, .progress-row, .bar { display: none !important; }
+      .q { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="eyebrow">Practice quiz · not an official examination paper</div>
+      <h1>Data Structures Practice Quiz: Stack, Queue, Linked List</h1>
+      <p class="lede">A short practice set on adding an item to a stack, a queue and a linear linked list, in the style of HKDSE ICT Elective Option C. Work from the arrays and pointers. You will see your score and brief feedback after you submit.</p>
+    </header>
+
+    <section class="card" aria-labelledby="id-heading">
+      <h2 id="id-heading" class="q-num" style="margin-top:0;">Your details (optional)</h2>
+      <p class="note" style="margin-bottom:12px;">Name and class are optional. Fill them in if your teacher wants a screenshot or a printed copy to show who took the quiz. Nothing is sent to a server.</p>
+      <div class="id-grid">
+        <label class="field">Name
+          <input type="text" id="student-name" name="student-name" autocomplete="name" placeholder="Optional">
+        </label>
+        <label class="field">Class
+          <input type="text" id="student-class" name="student-class" autocomplete="off" placeholder="Optional">
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <p class="q-num" style="margin-top:0;">Before you start</p>
+      <ul class="rules">
+        <li>Arrays are numbered from <strong>1</strong>.</li>
+        <li>The value <strong>0</strong> means empty for TOP and REAR, and null for NEXT.</li>
+        <li>An empty queue has <strong>FRONT = 1</strong> and <strong>REAR = 0</strong>. In this lesson’s model, FRONT stays on cell 1 while items are only added.</li>
+        <li>This practice covers <strong>adding</strong> only: push, enqueue, and one linked-list insert.</li>
+        <li>There are <strong>10</strong> questions. Choose one option for each. Answers are hidden until you submit.</li>
+      </ul>
+    </section>
+
+    <div class="progress-row">
+      <span id="progress-label">Answered 0 of 10</span>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="progress-bar"></span></div>
+
+    <section id="results" class="card" aria-live="polite">
+      <h2>Your result</h2>
+      <p class="who" id="result-who"></p>
+      <p class="score-line" id="result-score"></p>
+      <p class="note" id="result-blurb"></p>
+    </section>
+
+    <form id="quiz-form" novalidate></form>
+
+    <div class="actions">
+      <button type="button" id="submit-btn">Submit answers</button>
+      <button type="button" id="reset-btn" hidden>Try again</button>
+      <button type="button" id="print-btn" hidden>Print or save this page</button>
+      <p class="warn" id="warn">Please answer every question before submitting. Unanswered questions are marked below.</p>
+    </div>
+
+    <footer>
+      Practice quiz for a lesson on adding an item to a stack, a queue and a linear linked list. This is not an official HKDSE or school examination paper.
+    </footer>
+  </div>
+
+  <noscript>
+    <p style="padding:24px;color:#fff;background:#3a1c22;">Please enable JavaScript to take this practice quiz.</p>
+  </noscript>
+
+  <script>
+  (function () {
+    const QUESTIONS = [
+      {
+        id: "q1",
+        stem: "In this lesson, a stack is compared to a pile of plates and a queue is compared to a lunch line. Which statement is correct?",
+        options: [
+          "A new item is added at the front of a stack and at the top of a queue.",
+          "A new item is added at the top of a stack and at the rear of a queue.",
+          "A new item is added at cell 0 of both structures.",
+          "A new item is added by changing HEAD in both structures."
+        ],
+        answer: 1,
+        feedback: "A stack adds at the top (TOP). A queue adds at the rear (REAR). FRONT and HEAD are not the place where a new item is joined in this lesson’s add operations."
+      },
+      {
+        id: "q2",
+        stem: "Arrays in this lesson are numbered from 1, as in the public examination. An empty stack is stored in S[1..6], and TOP starts at 0. After the first push of 15, which statement is correct?",
+        options: [
+          "TOP = 0 and S[0] = 15.",
+          "TOP = 1 and S[0] = 15.",
+          "TOP = 1 and S[1] = 15.",
+          "TOP = 15 and S[1] = 1."
+        ],
+        answer: 2,
+        feedback: "Push increases TOP first, then writes the value at S[TOP]. From TOP = 0, that places 15 in S[1]. There is no cell S[0] in this model."
+      },
+      {
+        id: "q3",
+        stem: "The values 15, 28 and 41 are pushed onto an empty stack (TOP starts at 0). The same three values are then enqueued onto an empty queue (FRONT = 1, REAR = 0). Which statement is correct?",
+        options: [
+          "In both arrays the values occupy cells 1, 2 and 3 in the order 15, 28, 41. After the three operations, TOP = 3 and REAR = 3, but FRONT is still 1.",
+          "In the stack, 41 is stored in S[1]; in the queue, 41 is stored in Q[1].",
+          "After the three enqueues, FRONT = 3 and REAR = 3.",
+          "After the three pushes, TOP is still 0, because nothing has been removed."
+        ],
+        answer: 0,
+        feedback: "Each new value is written at the next cell: S[1], S[2], S[3] and Q[1], Q[2], Q[3]. TOP and REAR move to 3. Enqueue does not assign FRONT, so FRONT stays on cell 1."
+      },
+      {
+        id: "q4",
+        stem: "A stack is stored in S[1..6]. Now S[1] = 8, S[2] = 12 and TOP = 2. The next operation is push 19. Which of the following is correct?",
+        options: [
+          "First S[TOP] ← 19, then TOP ← TOP + 1. The result is TOP = 3 and S[2] = 19.",
+          "First TOP ← TOP + 1, then S[TOP] ← 19. The result is TOP = 3 and S[3] = 19; S[1] and S[2] are unchanged.",
+          "First TOP ← TOP + 1, then S[1] ← 19. The result is TOP = 3 and S[1] = 19.",
+          "S[3] ← 19, but TOP stays 2."
+        ],
+        answer: 1,
+        feedback: "The push steps are: increase TOP, then write the new value at S[TOP]. Writing first would overwrite S[2]; writing at S[1] would put the new value at the wrong end."
+      },
+      {
+        id: "q5",
+        stem: "A queue is stored in Q[1..6]. Now Q[1] = 20, FRONT = 1 and REAR = 1. After enqueue 36 and then enqueue 51, which statement is correct?",
+        options: [
+          "FRONT = 3, REAR = 3, Q[1] = 20, Q[2] = 36, Q[3] = 51.",
+          "FRONT = 1, REAR = 3, Q[1] = 51, Q[2] = 36, Q[3] = 20.",
+          "FRONT = 1, REAR = 2, Q[2] = 36, Q[3] = 51, and Q[1] is cleared.",
+          "FRONT = 1, REAR = 3, Q[1] = 20, Q[2] = 36, Q[3] = 51."
+        ],
+        answer: 3,
+        feedback: "Each enqueue does REAR ← REAR + 1, then Q[REAR] ← value. REAR moves from 1 to 2 and then to 3. FRONT is not assigned, so it stays 1 and Q[1] still holds 20."
+      },
+      {
+        id: "q6",
+        stem: "A linear linked list is stored in the arrays below. HEAD = 2 and NEXT = 0 means null. Starting from HEAD, in what order are the values in the list?",
+        table: {
+          headers: ["Index", "DATA", "NEXT"],
+          rows: [
+            ["1", "55", "0"],
+            ["2", "18", "4"],
+            ["3", "70", "1"],
+            ["4", "29", "3"],
+            ["5", "—", "0"]
+          ]
+        },
+        options: [
+          "18, 29, 55, 70",
+          "55, 18, 29, 70",
+          "18, 29, 70, 55",
+          "18, 4, 29, 3"
+        ],
+        answer: 2,
+        feedback: "Follow the NEXT arrows from HEAD, not the index column. HEAD = 2 gives 18, then NEXT 4 gives 29, then NEXT 3 gives 70, then NEXT 1 gives 55, then 0 (null). Option D mixes DATA values with NEXT pointers."
+      },
+      {
+        id: "q7",
+        stem: "HEAD = 1. The list is 16 → 45 → 62 → null. Node 4 is free, and DATA[4] ← 30 has already been written. The aim is to insert 30 between 45 and 62.",
+        extra: "Which two assignments, in this order, complete the insert safely?",
+        path: "16 → 45 → 62 → null,  insert 30 between 45 and 62.",
+        table: {
+          headers: ["Index", "DATA", "NEXT"],
+          rows: [
+            ["1", "16", "3"],
+            ["2", "62", "0"],
+            ["3", "45", "2"],
+            ["4", "30", "0"]
+          ]
+        },
+        options: [
+          "NEXT[4] ← NEXT[3], then NEXT[3] ← 4.",
+          "NEXT[3] ← 4, then NEXT[4] ← NEXT[3].",
+          "NEXT[4] ← 3, then NEXT[3] ← 4.",
+          "NEXT[1] ← 4, then NEXT[4] ← 2."
+        ],
+        answer: 0,
+        feedback: "Set the new node’s NEXT first, while NEXT[3] is still 2, so 30 points at 62. Then point 45 at 30: NEXT[3] ← 4. If NEXT[3] is changed first, the stored arrow from 45 to 62 is overwritten and node 2 is lost."
+      },
+      {
+        id: "q8",
+        stem: "A stack is stored in S[1..6]. Now S[1] = 15, S[2] = 28 and TOP = 2. A student wants to push 41, writes 41 into S[1], and leaves TOP as 2. Which statement best describes the error?",
+        options: [
+          "The student should have overwritten S[2] with 41 and left TOP as 2.",
+          "After a push, TOP should increase by 1 and the new value should be written at S[TOP]. The correct result is TOP = 3, S[1] = 15, S[2] = 28 and S[3] = 41.",
+          "The student should have written 41 into S[0], because that is the top of the stack.",
+          "There is no error: a stack always stores the newest value in S[1]."
+        ],
+        answer: 1,
+        feedback: "A common mistake is to write the new stack value at the left end. The existing values stay where they are. TOP moves from 2 to 3, and 41 is written in S[3]."
+      },
+      {
+        id: "q9",
+        stem: "HEAD = 1. The list is 15 → 41 → null. Node 3 is free. After 28 is inserted between 15 and 41 in the safe order, which statement is correct?",
+        options: [
+          "HEAD becomes 3, because 28 is the value that was just inserted.",
+          "HEAD becomes 2, because the list now contains one more node.",
+          "The order from HEAD is 28, 15, 41.",
+          "HEAD is still 1, and the order from HEAD is 15, 28, 41."
+        ],
+        answer: 3,
+        feedback: "A middle insert does not move HEAD. After NEXT[3] ← NEXT[1] and NEXT[1] ← 3, the walk from HEAD is 15, then 28, then 41."
+      },
+      {
+        id: "q10",
+        stem: "Which statement correctly matches each structure with the pointer that is updated when an item is added in this lesson?",
+        options: [
+          "Stack: FRONT increases. Queue: TOP increases. Linked list: only HEAD changes.",
+          "Stack: TOP increases. Queue: FRONT increases and REAR stays 0. Linked list: HEAD always becomes the new node.",
+          "Stack: TOP increases, then the value is written at S[TOP]. Queue: REAR increases, then the value is written at Q[REAR]; FRONT stays 1. Linked list (middle insert): the new node’s NEXT is set first, then the previous node’s NEXT is updated; HEAD stays 1.",
+          "In all three structures, FRONT moves one cell to the right, and later array values are shifted along."
+        ],
+        answer: 2,
+        feedback: "Only the pointers used by the add operation change: TOP, REAR, and the two NEXT pointers (new node first). FRONT stays 1 and HEAD stays 1 on a middle insert. Later array values are not shifted."
+      }
+    ];
+
+    const letters = ["A", "B", "C", "D"];
+    const form = document.getElementById("quiz-form");
+    const progressLabel = document.getElementById("progress-label");
+    const progressBar = document.getElementById("progress-bar");
+    const results = document.getElementById("results");
+    const resultWho = document.getElementById("result-who");
+    const resultScore = document.getElementById("result-score");
+    const resultBlurb = document.getElementById("result-blurb");
+    const submitBtn = document.getElementById("submit-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const printBtn = document.getElementById("print-btn");
+    const warn = document.getElementById("warn");
+    let graded = false;
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderTable(table) {
+      const head = table.headers.map(function (h) {
+        return "<th>" + escapeHtml(h) + "</th>";
+      }).join("");
+      const body = table.rows.map(function (row) {
+        return "<tr>" + row.map(function (cell) {
+          return "<td>" + escapeHtml(cell) + "</td>";
+        }).join("") + "</tr>";
+      }).join("");
+      return '<table class="arr"><thead><tr>' + head + "</tr></thead><tbody>" + body + "</tbody></table>";
+    }
+
+    function render() {
+      form.innerHTML = QUESTIONS.map(function (q, i) {
+        const diagram = [];
+        if (q.path) {
+          diagram.push('<p class="path">' + escapeHtml(q.path) + "</p>");
+        }
+        if (q.table) diagram.push(renderTable(q.table));
+        const extra = q.extra ? '<p class="stem" style="margin-top:12px;">' + escapeHtml(q.extra) + "</p>" : "";
+        const opts = q.options.map(function (text, j) {
+          const id = q.id + "-" + letters[j];
+          return (
+            '<label class="opt" data-index="' + j + '">' +
+              '<input type="radio" name="' + q.id + '" id="' + id + '" value="' + j + '">' +
+              '<span><span class="letter">' + letters[j] + ".</span> " + escapeHtml(text) + "</span>" +
+            "</label>"
+          );
+        }).join("");
+        return (
+          '<section class="card q" id="' + q.id + '-block" data-q="' + i + '">' +
+            '<p class="q-num">Question ' + (i + 1) + " of " + QUESTIONS.length + "</p>" +
+            '<p class="stem">' + escapeHtml(q.stem) + "</p>" +
+            (diagram.length ? '<div class="diagram">' + diagram.join("") + "</div>" : "") +
+            extra +
+            '<fieldset class="options" ' + (graded ? "disabled" : "") + ">" +
+              "<legend class=\"visually-hidden\" style=\"position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);\">Options for question " + (i + 1) + "</legend>" +
+              opts +
+            "</fieldset>" +
+            '<p class="feedback" id="' + q.id + '-fb"></p>' +
+          "</section>"
+        );
+      }).join("");
+    }
+
+    function selectedIndex(q) {
+      const picked = form.querySelector('input[name="' + q.id + '"]:checked');
+      return picked ? Number(picked.value) : null;
+    }
+
+    function answeredCount() {
+      return QUESTIONS.reduce(function (n, q) {
+        return n + (selectedIndex(q) !== null ? 1 : 0);
+      }, 0);
+    }
+
+    function updateProgress() {
+      const n = answeredCount();
+      const t = QUESTIONS.length;
+      progressLabel.textContent = "Answered " + n + " of " + t;
+      progressBar.style.width = (n / t * 100) + "%";
+    }
+
+    function clearMarks() {
+      QUESTIONS.forEach(function (q) {
+        const block = document.getElementById(q.id + "-block");
+        block.classList.remove("graded", "correct", "wrong");
+        block.querySelectorAll(".opt").forEach(function (lab) {
+          lab.classList.remove("chosen", "is-key");
+        });
+        document.getElementById(q.id + "-fb").textContent = "";
+      });
+    }
+
+    function submit() {
+      if (graded) return;
+      const missing = [];
+      QUESTIONS.forEach(function (q, i) {
+        if (selectedIndex(q) === null) missing.push(i);
+      });
+      if (missing.length) {
+        warn.style.display = "block";
+        warn.textContent = "Please answer every question before submitting. " +
+          missing.length + (missing.length === 1 ? " question is" : " questions are") +
+          " still blank.";
+        const first = document.getElementById(QUESTIONS[missing[0]].id + "-block");
+        first.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+      warn.style.display = "none";
+      graded = true;
+      let score = 0;
+      QUESTIONS.forEach(function (q) {
+        const choice = selectedIndex(q);
+        const ok = choice === q.answer;
+        if (ok) score += 1;
+        const block = document.getElementById(q.id + "-block");
+        block.classList.add("graded", ok ? "correct" : "wrong");
+        block.querySelectorAll(".opt").forEach(function (lab) {
+          const idx = Number(lab.getAttribute("data-index"));
+          if (idx === choice) lab.classList.add("chosen");
+          if (idx === q.answer) lab.classList.add("is-key");
+        });
+        block.querySelector("fieldset").disabled = true;
+        const fb = document.getElementById(q.id + "-fb");
+        fb.textContent = (ok ? "Correct. " : "Not quite. The correct option is " + letters[q.answer] + ". ") + q.feedback;
+      });
+      const name = document.getElementById("student-name").value.trim();
+      const klass = document.getElementById("student-class").value.trim();
+      const who = [name && ("Name: " + name), klass && ("Class: " + klass)].filter(Boolean).join(" · ");
+      resultWho.textContent = who || "No name or class was entered.";
+      resultScore.innerHTML = "Score: <strong>" + score + " / " + QUESTIONS.length + "</strong> (" + Math.round(score / QUESTIONS.length * 100) + "%)";
+      let blurb = "Review the feedback under each question. A green mark is your correct choice; if you missed one, the correct option is outlined and explained.";
+      if (score === QUESTIONS.length) {
+        blurb = "Full marks. Check the feedback if you want a short reminder of why each answer works.";
+      } else if (score >= 8) {
+        blurb = "A strong result. Look at any missed item — the usual slips are writing a stack value at the left end, moving FRONT during enqueue, or changing the previous NEXT before the new node’s NEXT is set.";
+      } else if (score >= 5) {
+        blurb = "A fair start. Revisit the missed items, especially the order of the two NEXT changes and whether FRONT or HEAD stays still when you only add data.";
+      } else {
+        blurb = "Use the feedback below as a short recap: arrays start at 1; push and enqueue increase TOP or REAR and then write the value; a middle insert sets the new node’s NEXT first.";
+      }
+      resultBlurb.textContent = blurb;
+      results.classList.add("show");
+      submitBtn.hidden = true;
+      resetBtn.hidden = false;
+      printBtn.hidden = false;
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function resetQuiz() {
+      graded = false;
+      form.reset();
+      clearMarks();
+      form.querySelectorAll("fieldset").forEach(function (fs) { fs.disabled = false; });
+      results.classList.remove("show");
+      submitBtn.hidden = false;
+      resetBtn.hidden = true;
+      printBtn.hidden = true;
+      warn.style.display = "none";
+      updateProgress();
+      document.getElementById("student-name").focus();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    render();
+    updateProgress();
+    form.addEventListener("change", updateProgress);
+    submitBtn.addEventListener("click", submit);
+    resetBtn.addEventListener("click", resetQuiz);
+    printBtn.addEventListener("click", function () { window.print(); });
+  })();
+  </script>
+</body>
+</html>
